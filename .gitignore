@@ -3,3 +3,5 @@
 *.DS_Store
 *_env
 *.pyc
+twilio_ex.py
+*examples
