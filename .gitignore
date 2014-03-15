@@ -1,4 +1,5 @@
 *data
-*text_featurization
+*text-featurization
 *.DS_Store
 *_env
+*.pyc
