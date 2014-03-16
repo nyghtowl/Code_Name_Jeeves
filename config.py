@@ -4,6 +4,7 @@
 import os
 
 from signal import signal, SIGPIPE, SIG_DFL 
+from twilio.rest import TwilioRestClient
 #Ignore SIG_PIPE and don't throw exceptions on it... (http://docs.python.org/library/signal.html)
 signal(SIGPIPE,SIG_DFL) 
 
