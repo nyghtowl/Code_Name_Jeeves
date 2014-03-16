@@ -34,3 +34,9 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
+
+# Python instance setup
+platform.py
+
+# Tunnel
+ngrok
