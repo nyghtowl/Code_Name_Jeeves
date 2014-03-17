@@ -40,3 +40,6 @@ platform.py
 
 # Tunnel
 ngrok
+
+#Workbooks
+*.ipynb
