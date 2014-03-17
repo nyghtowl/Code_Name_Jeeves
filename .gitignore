@@ -2,7 +2,6 @@
 
 *.py[cod]
 
-
 # Packages
 *_env
 *.egg
@@ -26,6 +25,11 @@ lib64
 *text-featurization
 twilio_ex.py
 *examples
+*not_needed
+
+# Tools
+*gmail
+*gmaillib.py
 
 # Installer logs
 pip-log.txt
@@ -43,3 +47,5 @@ ngrok
 
 #Workbooks
 *.ipynb
+
+
