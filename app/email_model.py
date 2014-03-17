@@ -18,7 +18,7 @@ def create_index(table_name, idx_col):
 def build_tables():
     # Use nvarchar in case storing non-english data
     table_data = {
-                    "mw_prof_emails": ["message_id int not null,  thread_id int, to_email varchar(255), from_email varchar(120), cc varchar(255), date varchar(64),subject varchar(120), body text, PRIMARY KEY(message_id)", "message_id"]
+                    "mw_prof_emails": ["message_id varchar(255) not null,  thread_id varchar(255), to_email varchar(255), from_email varchar(255), cc varchar(255), date timestamp,subject varchar(255), body text, PRIMARY KEY(message_id)", "message_id"]
                 }
 
     for idx, (name, params) in enumerate(table_data.iteritems()):
@@ -29,6 +29,9 @@ def drop_table(name):
     db.execute('''DROP TABLE IF EXISTS %s;''' % (name))
     # conn.commit()
 
+def clean_body(body):
+    return body.replace('\n', ' ').replace('\r', '')
+
 def store_email(email):
     store_e = '''
         insert into mw_prof_emails 
@@ -36,12 +39,12 @@ def store_email(email):
         values (%s, %s, %s, %s, %s, %s, %s, %s);
     '''
     # in psycopg - var placeholder must be %s even with int or dates or other types
-    db.execute(store_e, (int(email.message_id), int(email.thread_id), email.to, email.fr, email.cc, email.headers['Received'], email.subject, email.body))
+    db.execute(store_e, (email.message_id, email.thread_id, email.to, email.fr, email.cc, email.sent_at, email.subject, clean_body(email.body)))
 
 # may be able to pull from other folders
 def get_emails():
     gmail_conn = gmail.login(TEST_GMAIL_ID, TEST_GMAIL_PWD)
-    emails = gmail_conn.inbox().mail(before=datetime.date(2014, 1, 1))
+    emails = gmail_conn.inbox().mail(after=datetime.date(2014, 3, 1))
     for email in emails:
         email.fetch()
         store_email(email)
