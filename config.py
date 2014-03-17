@@ -27,21 +27,24 @@ PSQL_USER = os.environ.get('psql_user')
 
 twilio_client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-# Connect to postgres
-conn = None
+conn = psycopg2.connect(database='jeeves_db', user=PSQL_USER) 
+db = conn.cursor()
+conn.set_session(autocommit=True)
 
-try:
-     
-    conn = psycopg2.connect(database='jeeves_db', user=PSQL_USER) 
-    db = conn.cursor()
-    db.execute('SELECT version()')          
-    ver = db.fetchone()
-    print ver    
+# Connect to postgres
+# conn = None
+
+# try:     
+#     conn = psycopg2.connect(database='jeeves_db', user=PSQL_USER) 
+#     db = conn.cursor()
+#     db.execute('SELECT version()')          
+#     ver = db.fetchone()
+#     print ver    
     
 
-except psycopg2.DatabaseError, e:
-    print 'Error %s' % e    
-    sys.exit(1)
+# except psycopg2.DatabaseError, e:
+#     print 'Error %s' % e    
+#     sys.exit(1)
     
     
 # finally:
