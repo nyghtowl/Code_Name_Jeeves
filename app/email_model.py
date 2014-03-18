@@ -30,7 +30,9 @@ def drop_table(name):
     # conn.commit()
 
 def clean_body(body):
-    return body.replace('\n', ' ').replace('\r', '')
+    return body.replace('\r', '').replace('\xa9', '')
+
+    # replace('\n', ' ')
 
 def store_email(email):
     store_e = '''
