@@ -20,8 +20,10 @@ TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 TWILIO_NUM = os.environ.get('TWILIO_NUM')
 TWILIO_APP_SID = os.environ.get('TWILIO_APP_SID')
 MY_NUM = os.environ.get('MY_NUM')
-TEST_GMAIL_ID = os.environ.get('test_gmail_id_2')
-TEST_GMAIL_PWD = os.environ.get('test_gmailpwd_2')
+TEST_GMAIL_ID = os.environ.get('test_gmail_id_1')
+TEST_GMAIL_PWD = os.environ.get('test_gmailpwd_1')
+TEST_GMAIL_ID_2 = os.environ.get('test_gmail_id_2')
+TEST_GMAIL_PWD_2 = os.environ.get('test_gmailpwd_2')
 PSQL_USER = os.environ.get('psql_user')
 
 
