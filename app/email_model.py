@@ -9,11 +9,8 @@ Creating table for a data dump
 def create_table(table_name, values):
     db.execute('''create table %s(%s)''' % (table_name, values))
 
-    # conn.commit()
-
 def create_index(table_name, idx_col):
     db.execute('''create index id_%s on %s (%s);''' % (table_name, table_name, idx_col)) 
-    # conn.commit() 
 
 def build_tables():
     # Use nvarchar in case storing non-english data
@@ -27,7 +24,6 @@ def build_tables():
 
 def drop_table(name):
     db.execute('''DROP TABLE IF EXISTS %s;''' % (name))
-    # conn.commit()
 
 def clean_body(body):
     return body.replace('\r', '').replace('\xa9', '')

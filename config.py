@@ -31,6 +31,7 @@ conn = psycopg2.connect(database='jeeves_db', user=PSQL_USER)
 db = conn.cursor()
 conn.set_session(autocommit=True)
 
+
 # Connect to postgres
 # conn = None
 
