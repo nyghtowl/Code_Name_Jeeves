@@ -51,6 +51,7 @@ def store_email(email):
     elif '\\Starred' in email.labels:
         starred = True
 
+    # Could apply executemany with query and list of values but still need to do fetch first and apply changes
     try:
         db.execute(store_e, (email.message_id, email.thread_id, email.to, email.fr, email.cc, email.sent_at, email.subject, starred, clean_body(email.body), target))
     except psycopg2.IntegrityError:

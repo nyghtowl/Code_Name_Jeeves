@@ -11,9 +11,6 @@ from twilio.rest import TwilioRestClient
 signal(SIGPIPE,SIG_DFL) 
 
 
-
-
-
 SECRET_KEY = os.environ.get('key')
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
