@@ -1,3 +1,7 @@
+'''
+Creating and storing raw(ish) email data.
+'''
+
 from config import conn, db, TEST_GMAIL_ID, TEST_GMAIL_PWD
 import psycopg2
 import gmail
@@ -5,9 +9,6 @@ import datetime
 import re
 import pdb
 
-'''
-Creating and storing raw(ish) data.
-'''
 
 # Building the structure
 

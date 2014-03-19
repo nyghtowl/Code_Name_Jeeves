@@ -36,7 +36,7 @@ Stored in Postgres DB
 Raw Data:
 - Message ID (message_id) = string / primary key
 - Thread ID (thread_id) = string
-- To (to_from) = string
+- To (to_email) = string
 - From (from_email) = string
 - CC (cc) = string
 - Date Sent (date) = timestamp
