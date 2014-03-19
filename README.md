@@ -6,11 +6,10 @@ Project idea is to get my computer to do something smart. Have my computer class
 ------------
 
 To Do:
-- Figure out how to get out of Postgres
-- Pull out data to do eda
+- Run EDA
 - Develop features
 
-By Wed:
+By Wed: (may be Thurs)
 - Build classification model (review and leverage work from nlp project)
 
 
@@ -51,5 +50,8 @@ Completed:
 - Labeled messages that meet conditions / classify true & determined how to designate results in raw data database (target column)
 - Built & rebuilt Postgres table
 - Data munged and loaded raw data into Postgres
+- Pulled in science packages for virtualenv (resolved matplotlib issues after some experimenting with creating symbolic links to anaconda)
+- Figured out how to pull postgres into pandas
+
 
 - Setup Twilio text message structure for results
