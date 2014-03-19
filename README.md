@@ -2,6 +2,7 @@
 Zipfian FInal Project
 
 Project idea is to get my computer to do something smart. Have my computer classify incoming emails that need a meeting location defined.
+
 ------------
 
 To Do:
