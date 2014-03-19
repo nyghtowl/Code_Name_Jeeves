@@ -1,4 +1,0 @@
-'''
-Email Classification Model
-
-'''
