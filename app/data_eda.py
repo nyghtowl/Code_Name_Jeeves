@@ -68,14 +68,6 @@ def del_row(df, row_name):
     del df[row_name, :]
 
 
-def print_cloud(data):
-    # Good for analyzing bag of words
-    for i in range(data.shape[0]):
-        word_dict = {feature_names[idx]: data[i][idx]*100 for idx in data[i].argsort()[:-20:-1]}
-        cloud = vincent.Word(word_dict)
-        print "Cloud", i
-        cloud.display()
-
 
 def main():
     index_col = 'message_id'
