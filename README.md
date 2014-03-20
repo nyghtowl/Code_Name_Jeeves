@@ -6,28 +6,49 @@ Project idea is to get my computer to do something smart. Have my computer class
 ------------
 
 To Do:
-- Develop features
-- Continue to look at dimensionality reduction approaches
-- Build classification model (review and leverage work from nlp project)
- 
+
+- Continue to work on models
+    - Work on adjusting parameters
+    - Find an output for comparison of models
+    - Use accuracy and confusion matrix and roc plot?
+    - Try SVM, Random Forest and others just because I have the time
+- Add feature binary (has a date or not)
+- Close loop to bring in new email, apply classification model, use prediction to trigger whether to push data to text
+
 
 As Time Permits:
+- Other feature ideas / customization
+    - Python NLP / Regex library
+    - length of thread
+    - # email from an email address / new or not
+    - email address in contacts or on Linkedin...
 - Run more EDA
 
 - Look at pulling in other data sources
 - Update raw data structure to track where emails are from
-
+- Continue to look at dimensionality reduction approaches
+- Turn my pipeline sections into classes/objects
 
 Nice to haves - will work on as time permits or when need a break:
 
 - Setup Gmail API to receive new mail
 - Setup code for my computer to "say" the classification outcome whent its true
 
+
+Visualization Ideas:
+- map words and features to coefficients
+- visualize dominant coeef - % positive emails has this dominant cooef
+
 ---------------
 Issues:
 - Limited data for significant enough results (potential for overfitting and/or low accuracy)
+- Duplication of data where there is a row per email no matter if its in a thread and emails typically contain duplications of the content from previous emails
+    - should just pick one email out of  thread and one that has the latest date
+    - Granted this is allowing resampling of the data
+
+
 - Resolved Anaconda, virtualenv and ipython issues
-- Still tbd if science packages have issues with virtualenv
+- Resolved science packages work in virtualenv
 
 ---------------
 Data:
@@ -59,6 +80,10 @@ Completed:
 - Pulled in science packages for virtualenv (resolved matplotlib issues after some experimenting with creating symbolic links to anaconda)
 - Figured out how to pull postgres into pandas
 - Ran initial EDA and confirmed dataset small as well as ways to consider subsetting. Also found a few issues with the data like empty cells.
-- Started vectorization and began dimensionality reduction functions
+- Started vectorization and began dimensionality reduction 
+- Realized dimensionality not as valuable as thought but will keep it as back pocket item
+- Built initial classification models (review and leverage work from nlp project)
+    - Logistic Regression & Naive Bayes
+
 
 
