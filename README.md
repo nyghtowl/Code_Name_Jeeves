@@ -6,11 +6,16 @@ Project idea is to get my computer to do something smart. Have my computer class
 ------------
 
 To Do:
-- Run EDA
 - Develop features
-
-By Wed: (may be Thurs)
+- Continue to look at dimensionality reduction approaches
 - Build classification model (review and leverage work from nlp project)
+ 
+
+As Time Permits:
+- Run more EDA
+
+- Look at pulling in other data sources
+- Update raw data structure to track where emails are from
 
 
 Nice to haves - will work on as time permits or when need a break:
@@ -46,12 +51,14 @@ Raw Data:
 
 ---------------
 Completed:
+- Setup Twilio text message structure for results
 - Picked Gmail package to pull gmail and applied
 - Labeled messages that meet conditions / classify true & determined how to designate results in raw data database (target column)
 - Built & rebuilt Postgres table
 - Data munged and loaded raw data into Postgres
 - Pulled in science packages for virtualenv (resolved matplotlib issues after some experimenting with creating symbolic links to anaconda)
 - Figured out how to pull postgres into pandas
+- Ran initial EDA and confirmed dataset small as well as ways to consider subsetting. Also found a few issues with the data like empty cells.
+- Started vectorization and began dimensionality reduction functions
 
 
-- Setup Twilio text message structure for results
