@@ -45,11 +45,11 @@ def plot_line(df, data_title, data_xlabel, data_ylabel, save_name=None):
         data_ln.savefig(save_name)
     #data_ln.show()
 
-def plot_hist(df, xlabels, data_title, data_xlabel, data_ylabel, bin=7, save_name=None):
+def plot_hist(df, data_title, data_xlabel, data_ylabel, bin=7, save_name=None):
     #temp['weekday'] = data[data['target']== True]
     # ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun']
     hist_ex = df.hist(bins=bin)
-    hist_ex.set_xticklabels(xlabels)
+#    hist_ex.set_xticklabels(xlabels)
     hist_ex.set_title(data_title, fontsize=14)
     hist_ex.set_xlabel(data_xlabel)
     hist_ex.set_ylabel(data_ylabel)
