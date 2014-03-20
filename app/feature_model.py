@@ -8,9 +8,11 @@ Build and store features - create cpt tables and leverage naive bayes sql for th
 from config import conn, db
 from data_eda import main as eda_main
 
-from sklearn import decomposition
+from sklearn.decomposition import NMF, RandomizedPCA, TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.cross_validation import train_test_split
+import vincent
+vincent.core.initialize_notebook()
 
 from time import time
 
@@ -28,46 +30,43 @@ def create_bag(features, vectorizer):
     print "done in %0.3fs." % (start - time())
     return bag_words, feature_names
 
-# Feature Decomposition - NMF
+# Feature Decomposition 
 
-def fit_nmf(k, bag):
+def create_decomp(decomp_model, k):
+    #NMF, RandomizedPCA
+    return decomp_model(n_components=k)
+
+def transform_features(decomp_model, data):
     start = time()
-    nmf = decomposition.NMF(n_components=k).fit(bag)
+    result = decomp_model.fit_transform(data)
     print "done in %0.3fs." % (start - time())
-    return nmf  
+    return result, decomp_model
+    # Are these different?
 
-def nmf_transform(nmf, bag):
-    start = time()
-    W = nmf.transform(bag) # apps by k
-    H = nmf.components_ # words by k
-    print W.shape, H.shape
-    print "done in %0.3fs." % (start - time())
-    return W, H
 
+# NMF Assess
 def top_vals(matrix, labels, num):
     for idx, row in enumerate(matrix):    
         print("Category #%d:" % idx)
         print("| ".join([labels[i] for i in row.argsort()[:-num-1:-1]]))
         print()
 
-def review_nmf(H, W, feature_names, data):
-    print "H"
-    print top_vals(H, feature_names, 3)
-    print "W"
-    print top_vals(W.T, data, 3)
+def get_top_vals(H, W, feature_names, data, num):
+    print "H - Words"
+    print top_vals(H, feature_names, num)
+    print "W - Data Source"
+    print top_vals(W.T, data, num)
+
+def print_cloud(data, feature_names):
+    # Good for analyzing bag of words
+    for i in range(data.shape[0]):
+        word_dict = {feature_names[idx]: data[i][idx]*100 for idx in data[i].argsort()[:-20:-1]}
+        cloud = vincent.Word(word_dict)
+        print "Cloud", i
+        cloud.display()
 
 
-# Feature Decomposition - PCA
-
-def fit_pca():
-
-    pca = decomposition.RandomizedPCA(n_components=2)
-    return pca
-
-def transform_pca(pca):
-    x_pca = pca.fit_transform(x_train)
-    return x_pca
-
+# PCA Assess
 def plot_scatter(x_pca, y_train):
     colors = ['r', 'b']
     markers = ['o', 's']
