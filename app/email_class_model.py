@@ -14,10 +14,14 @@ from sklearn.cross_validation import train_test_split, KFold, StratifiedKFold, c
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.grid_search import GridSearchCV
+
+import cPickle # same as pickle but faster and implemented in C
+
 # X is bag of words per email
 # Y is target true and false per email
 
-def create_datasets(X, y, split_size=.30):
+def create_datasets(X, y, split_size=.30): # regularization sprint - cross val hyper
     #X[:,np.newaxis] ?
     return train_test_split(X, y, test_size=split_size)
 
@@ -34,13 +38,30 @@ def predict_eval(model, X_test, y_test):
     y_pred = model.predict(X_test)
     print 'Straight Accuracy Calc:', (float(([y_val == y_pred[i] for i, y_val in np.ndenumerate(y_test)]).count(True)) / len(y_pred))
     print 'SKLearn Accuracy Score: %.5f' % model.score(X_test, y_test)
-    print 'Confusion Matrix:', '\n', confusion_matrix(y_test, y_pred)
+    
+    labels = [True, False]
+    cm = confusion_matrix(y_test, y_pred, labels)
+    print 'Confusion Matrix:', '\n', cm
+    plot_confusion_matrix(cm, labels)
     plot_roc_curve(y_test, y_pred)
+
+def plot_confusion_matrix(cm, labels):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cax = ax.matshow(cm)
+    plt.title('Confusion matrix of the classifier')
+    fig.colorbar(cax)
+    ax.set_xticklabels([''] + labels)
+    ax.set_yticklabels([''] + labels)
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.show()
 
 def plot_roc_curve(y_test, y_pred):
     # Receiver operating characteristic - if line is close to top left its a good model fit
     fpr, tpr, thresholds = roc_curve(y_test, y_pred)
-    roc_auc = auc(fpr, tpr)
+    roc_auc = auc(fpr, tpr) # same as roc_auc_score method
+    print 'fpr', fpr, 'tpr', tpr
     plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)
     plt.plot((0, 1), (0, 1), 'k--')  # random predictions curve
     plt.xlim(0.0, 1.0)
@@ -50,8 +71,10 @@ def plot_roc_curve(y_test, y_pred):
     plt.title('Receiver Operating Characteristic Curve')
     plt.legend(loc='lower right')
 
+# Add precision recall curve - similar to roc curve - shows how sold true is in comparison to true and false positives
+
 def get_cv_scores(model, X_test, y_test):
-    return cross_val_score(model, X_test, y_test, cv=10, scoring='roc_auc')
+    return cross_val_score(model, X_test, y_test, cv=3, scoring='roc_auc')
 
 def plot_cross_val(model, X_test, y_test):
     cv_scores = get_cv_scores(model, X_test, y_test)
@@ -68,6 +91,15 @@ def plot_cross_val(model, X_test, y_test):
            label='Median Test Score')
     plt.legend(loc='best')
     _ = plt.title('Cross Validated Test Scores Distribution')
+
+def pickle_stuff(stuff, filename):
+    # use pkl for the filename and write in binary
+    with open(filename, 'wb') as m:
+        cPickle.dump(stuff, m)
+
+def unpickle_stuff(filename):
+    with open(filename, 'rb') as m:
+        return cPickle.load(m)
 
 def main():
     X, y = feature_main()
