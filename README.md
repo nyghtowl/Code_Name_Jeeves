@@ -10,9 +10,12 @@ To Do:
 - Continue to work on models
     - Work on adjusting parameters
     - Find an output for comparison of models
-    - Use accuracy and confusion matrix and roc plot?
-    - Try SVM, Random Forest and others just because I have the time
+        - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
+    - Try SVM, Random Forest, Ensemble, GradienBoost? and others... use gridesearch
+- Work on train/test split and applying k-folds / stratified
 - Add feature binary (has a date or not)
+- Remove certain words that are skewing the results
+    - my name (so it is more abstract)
 - Close loop to bring in new email, apply classification model, use prediction to trigger whether to push data to text
 
 
@@ -84,6 +87,7 @@ Completed:
 - Realized dimensionality not as valuable as thought but will keep it as back pocket item
 - Built initial classification models (review and leverage work from nlp project)
     - Logistic Regression & Naive Bayes
+    - Built classification model analysis with accuracy, roc plot, etc.
 
 
 
