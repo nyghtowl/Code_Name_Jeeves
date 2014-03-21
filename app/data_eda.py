@@ -75,6 +75,7 @@ def main():
     raw_df = raw_df.set_index(index_col, drop=True, verify_integrity=True)
 
     raw_df = add_col(raw_df, 'weekday', raw_df['date'].apply(lambda d: d.weekday()))
+    raw_df['body'] = raw_df['body'].fillna(value='empty')
     return raw_df
 
 if __name__ == '__main__':
