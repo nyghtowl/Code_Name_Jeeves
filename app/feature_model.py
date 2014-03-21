@@ -6,6 +6,8 @@ Build and store features - create cpt tables and leverage naive bayes sql for th
 '''
 
 from config import conn, db
+# Need to replace this by pushing and pulling data from postgres or other persistant data source
+
 from data_eda import main as eda_main
 
 from sklearn.decomposition import NMF, RandomizedPCA, TruncatedSVD
@@ -38,7 +40,7 @@ def create_decomp(decomp_model, k):
 
 def transform_features(decomp_model, data):
     start = time()
-    result = decomp_model.fit_transform(data)
+    result = decomp_model.fit_transform(data.todense())
     print "done in %0.3fs." % (start - time())
     return result, decomp_model
     # Are these different?
@@ -63,6 +65,9 @@ def print_cloud(data, feature_names):
         word_dict = {feature_names[idx]: data[i][idx]*100 for idx in data[i].argsort()[:-20:-1]}
         cloud = vincent.Word(word_dict)
         print "Cloud", i
+        cloud.width = 400
+        cloud.height = 400
+        cloud.padding = 0
         cloud.display()
 
 
@@ -85,17 +90,19 @@ def plot_scatter(x_pca, y_train):
 
     _ = plt.legend(loc='best')
 
-# def main():
-#     # cv = create_vectorizer(CountVectorizer)
-#     tf = create_vectorizer(TfidfVectorizer)
+def main():
+    vectorizer = TfidfVectorizer
+    data = eda_main()
+#    print data['body'].isnull().sum()
+
+    vect = create_vectorizer(vectorizer)
+    bag, feature_labels = create_bag(data.body, vect)
+    return bag, data['target']
 
 #     # bag_cv, feature_names_cv = create_bag(data['app description'], cv)
 #     bag_tf, feature_names_tf = create_bag(data['app description'], tf
 
     # nmf = fit_nmf(7, bag.todense())
-
-
-# Feature Decomposition - SVD
 
 
 # table_data = {
