@@ -1,25 +1,36 @@
 # Code Name Jeeves 
-Zipfian FInal Project
+Zipfian Final Project
 
-Project idea is to get my computer to do something smart. Have my computer classify incoming emails that need a meeting location defined.
+General idea idea is to get my computer to do something smart. Narrowed down to have my computer classify incoming emails that need a meeting location defined.
 
 ------------
 
 To Do:
 
-- Continue to work on models
-    - Work on adjusting parameters
+- Confirm full loop is closed - check into adding time.sleep and make sure gmail object working with script abstraction
+
+
+- Improve models
+    - Finish Gradient Descent grid search
+    - Work on tuning parameters - look at other ways to optimize alpha for naive bayes
     - Find an output for comparison of models
         - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
-    - Try SVM, Random Forest, Ensemble, GradienBoost? and others... use gridesearch
-- Work on train/test split and applying k-folds / stratified
-- Add feature binary (has a date or not)
-- Remove certain words that are skewing the results
-    - my name (so it is more abstract)
-- Close loop to bring in new email, apply classification model, use prediction to trigger whether to push data to text
+    - Work on train/test split and applying k-folds / stratified
+
+- Improve features
+    - Stem words
+    - word shape adjustment
+    - Has date in text body
+    - combine subject with body words (also run with separate models)
+    - n grams
+    - Remove certain words that are skewing the results
+        - my name (so it is more abstract)
 
 
 As Time Permits:
+- Look at pulling in other data sources
+- Update raw data structure to track where emails are from
+
 - Other feature ideas / customization
     - Python NLP / Regex library
     - length of thread
@@ -27,10 +38,9 @@ As Time Permits:
     - email address in contacts or on Linkedin...
 - Run more EDA
 
-- Look at pulling in other data sources
-- Update raw data structure to track where emails are from
+
 - Continue to look at dimensionality reduction approaches
-- Turn my pipeline sections into classes/objects
+- Turn pipeline sections into classes/objects
 
 Nice to haves - will work on as time permits or when need a break:
 
@@ -48,6 +58,7 @@ Issues:
 - Duplication of data where there is a row per email no matter if its in a thread and emails typically contain duplications of the content from previous emails
     - should just pick one email out of  thread and one that has the latest date
     - Granted this is allowing resampling of the data
+- Facet Plot seems to extreme for words. Too many features and what value is there plotting features against features
 
 
 - Resolved Anaconda, virtualenv and ipython issues
@@ -88,6 +99,12 @@ Completed:
 - Built initial classification models (review and leverage work from nlp project)
     - Logistic Regression & Naive Bayes
     - Built classification model analysis with accuracy, roc plot, etc.
+- Built out code to fetch new email, check email and send text if true condition met - need to test
+- Built out alternative classification models: Random Forest, Gradient Boost, Ada Boost and SVC. Gradient Boost gave best results with plain out of the box
+- Applied grid search which sign improved Logistic Regression and Multinomial NB. 
 
+- Applied cPickle to save models because fast and commone solution. Sklearn has joblib which is similar and good for big data
 
-
+---------------
+Stuff:
+- Think of this project similar to spam filters where a false positive (email sent that needs a location) is more acceptible than a false negative (email not sent that needs a location)
