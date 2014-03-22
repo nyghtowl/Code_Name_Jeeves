@@ -13,10 +13,15 @@ from sklearn.preprocessing import Binarizer
 from sklearn.cross_validation import train_test_split, KFold, StratifiedKFold, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.grid_search import GridSearchCV
 
 import cPickle # same as pickle but faster and implemented in C
+
+from time import time
+import os 
 
 # X is bag of words per email
 # Y is target true and false per email
@@ -26,12 +31,13 @@ def create_datasets(X, y, split_size=.30): # regularization sprint - cross val h
     return train_test_split(X, y, test_size=split_size)
 
 def build_model(model, X_train, y_train):
-    #return model.fit_transform(X_train, y_train) - why is this not working?
+    start = time()
     model.fit(X_train, y_train)
+    print "Train model in %0.2fs." % (start - time())
     return model
 
 def predict_eval(model, X_test, y_test):
-    # The mean square error - how much the values can fluctuate
+    # The mean square error - how much the values can fluctuate - need for logistic
     # print('Root Mean Squared Error: %.2f' % ((np.mean((model.predict(X_test) - y_test) ** 2))**(0.5)))
 
     # R squared / proportion of variance explained by model: 1 is perfect prediction
@@ -49,7 +55,7 @@ def plot_confusion_matrix(cm, labels):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     cax = ax.matshow(cm)
-    plt.title('Confusion matrix of the classifier')
+    plt.title('Email Classifier Confusion Matrix (identifying email that needs a meeting')
     fig.colorbar(cax)
     ax.set_xticklabels([''] + labels)
     ax.set_yticklabels([''] + labels)
@@ -61,7 +67,6 @@ def plot_roc_curve(y_test, y_pred):
     # Receiver operating characteristic - if line is close to top left its a good model fit
     fpr, tpr, thresholds = roc_curve(y_test, y_pred)
     roc_auc = auc(fpr, tpr) # same as roc_auc_score method
-    print 'fpr', fpr, 'tpr', tpr
     plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)
     plt.plot((0, 1), (0, 1), 'k--')  # random predictions curve
     plt.xlim(0.0, 1.0)
@@ -94,15 +99,29 @@ def plot_cross_val(model, X_test, y_test):
 
 def pickle_stuff(stuff, filename):
     # use pkl for the filename and write in binary
-    with open(filename, 'wb') as m:
-        cPickle.dump(stuff, m)
+    with open(filename, 'wb') as f:
+        cPickle.dump(stuff, f)
 
 def unpickle_stuff(filename):
-    with open(filename, 'rb') as m:
-        return cPickle.load(m)
+    with open(filename, 'rb') as f:
+        return cPickle.load(f)
 
 def main():
     X, y = feature_main()
+    # model = LogisticRegression()
+
+    # X_train, x_test, y_train, y_test = create_datasets(X, y)
+
+    # model = build_model(model, X_train, y_train)
+
+    # model_directory = 'model_pkl'
+    # if not os.path.exists(model_directory):
+    #     os.makedirs(model_directory)
+
+    # model_path = os.path.join(model_directory, filename)
+
+    # pickle_stuff(model, model_path)
+    
     return X, y
 
 if __name__ == '__main__':
