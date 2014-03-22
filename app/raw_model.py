@@ -2,12 +2,12 @@
 Creating and storing raw(ish) email data.
 '''
 
-from config import conn, db, TEST_GMAIL_ID, TEST_GMAIL_PWD
+from config import conn, db
 import psycopg2
-import gmail
 import datetime
 import re
 import pdb
+import fetch_gmail
 
 
 # Building the structure
@@ -59,18 +59,12 @@ def store_email(email):
     # if exists then skip loading it
         pass
 
-def get_emails(box, date=datetime.datetime.now()):
-    gmail_conn = gmail.login(TEST_GMAIL_ID, TEST_GMAIL_PWD)
-    emails = gmail_conn.label(box).mail(after=date)
-
-    print "num emails:", len(emails)
+def batch_get_email(box, date=datetime.datetime.now()):
+    emails = fetch_gmail.get_emails(box, date)
     for email in emails:
         # Call fetch to pull in email attributes
         email.fetch()
         store_email(email)
-
-    gmail_conn.logout()
-    print "Logged in?", gmail_conn.logged_in
 
 def main():
     table_data = {
@@ -88,7 +82,7 @@ def main():
                 PRIMARY KEY(message_id)", "message_id"]
             }
     build_tables(table_data)
-    get_emails('INBOX', datetime.date(2014, 3, 16))
-    get_emails('Career')
-    get_emails('Hackday_Group')
+    batch_get_emails('INBOX', datetime.date(2013, 5, 1))
+    batch_get_emails('Career', datetime.date(2013, 5, 1))
+    batch_get_emails('Hackday_Group', datetime.date(2013, 5, 1))
 # conn.close()
