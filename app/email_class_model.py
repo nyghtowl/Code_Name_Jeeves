@@ -15,7 +15,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import confusion_matrix, roc_curve, auc, accuracy_score, classification_report
 from sklearn.grid_search import GridSearchCV
 
 import cPickle # same as pickle but faster and implemented in C
@@ -30,24 +30,40 @@ def create_datasets(X, y, split_size=.30): # regularization sprint - cross val h
     #X[:,np.newaxis] ?
     return train_test_split(X, y, test_size=split_size)
 
+def print_test_train_shape(X_train, X_test, y_train, y_test):
+
+    print 'X_train:', shape(X_train)
+    print 'X_test:', shape(X_test)
+    print 'y_train:', shape(y_train)
+    print 'y_test:', shape(y_test)
+
 def build_model(model, X_train, y_train):
     start = time()
     model.fit(X_train, y_train)
     print "Train model in %0.2fs." % (start - time())
     return model
 
-def predict_eval(model, X_test, y_test):
+def model_eval(model, X_test, y_test):
     # The mean square error - how much the values can fluctuate - need for logistic
     # print('Root Mean Squared Error: %.2f' % ((np.mean((model.predict(X_test) - y_test) ** 2))**(0.5)))
 
     # R squared / proportion of variance explained by model: 1 is perfect prediction
+
+    # These are the same as score on the model
+    # print 'Straight Accuracy Calc:', (float(([y_val == y_pred[i] for i, y_val in np.ndenumerate(y_test)]).count(True)) / len(y_pred))
+    # print 'SKLearn Prediction Accuracy Score: %.5f' % accuracy_score(y_test, y_pred) 
+
     y_pred = model.predict(X_test)
-    print 'Straight Accuracy Calc:', (float(([y_val == y_pred[i] for i, y_val in np.ndenumerate(y_test)]).count(True)) / len(y_pred))
+
     print 'SKLearn Accuracy Score: %.5f' % model.score(X_test, y_test)
-    
+
+    print "Classification Report:"
+    print classification_report(y_test, y_pred)
+
     labels = [True, False]
     cm = confusion_matrix(y_test, y_pred, labels)
-    print 'Confusion Matrix:', '\n', cm
+    print 'Confusion Matrix:'
+    print cm
     plot_confusion_matrix(cm, labels)
     plot_roc_curve(y_test, y_pred)
 
@@ -96,6 +112,31 @@ def plot_cross_val(model, X_test, y_test):
            label='Median Test Score')
     plt.legend(loc='best')
     _ = plt.title('Cross Validated Test Scores Distribution')
+
+
+def grid_search(model, params, X_train, y_train,  n_jobs=-1, k_fold=3):
+    start = time()
+    # Confirm param vals in list form otherwise grid search throws error
+    #params = {k: (v if type(v) == list else [v]) for k, v in params.items() }
+
+    clf = GridSearchCV(model, params, cv=k_fold, n_jobs=n_jobs)
+    clf.fit(X_train, y_train)
+    
+    print "Grid search model in %0.2fs." % (start - time())
+
+    print 'Best Estimators'
+    print clf.best_estimator_
+    print 'Best params'
+    print clf.best_params_
+    print 'Best Scores'
+    print clf.best_score_
+
+    # print 'Grid Scores'    
+    # for params, mean_score, scores in clf.grid_scores_:
+    #     print"%0.3f (+/-%0.03f) for %r" %(mean_score, scores.std(), params)
+    
+    return clf.best_params_, clf.best_estimator_
+
 
 def pickle_stuff(stuff, filename):
     # use pkl for the filename and write in binary
