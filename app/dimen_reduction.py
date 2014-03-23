@@ -1,5 +1,10 @@
 # Dimensionality Reduction Methods 
 
+from sklearn.decomposition import NMF, RandomizedPCA, TruncatedSVD
+
+import vincent
+vincent.core.initialize_notebook()
+
 def create_decomp(decomp_model, k):
     #NMF, RandomizedPCA
     return decomp_model(n_components=k)
