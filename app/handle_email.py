@@ -12,7 +12,7 @@ def check_email():
 
     current_time = datetime.now()
     previous_check = cpm.unpickle('./model_pkl/last_check_time.pkl')
-    previous_check = current_time   
+    print previous_check
     emails = cpm.get_emails('INBOX', previous_check)
 
     feature_model = cpm.unpickle('./model_pkl/final_vec.pkl')
