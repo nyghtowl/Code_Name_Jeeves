@@ -1,14 +1,15 @@
 '''
 Jeeves Project
 
-Build and store features - create cpt tables and leverage naive bayes sql for this section
+Engineer and store features
+
+create cpt tables and leverage naive bayes sql for this section
 
 '''
 
-from config import conn, db
 # Need to replace this by pushing and pulling data from postgres or other persistant data source
 
-from data_eda import main as eda_main
+import common as cpm
 
 from sklearn.decomposition import NMF, RandomizedPCA, TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
@@ -17,6 +18,7 @@ import vincent
 vincent.core.initialize_notebook()
 
 from time import time
+import pandas as pd
 
 # Create Bag of Words / Features
 def init_vectorizer(vectorizer_object):
@@ -30,104 +32,30 @@ def fit_vectorizer(features, vectorizer):
     print "Fit vectorizer in %0.3fs." % (start - time())
     return vectorizer
 
-def transform_bag(data, vectorizer):
+def apply_features(data, feature_set):
     start = time()
-    feature_set = vectorizer.transform(data)
-    print 'feature_set:', bag_words
+    transformed_x = feature_set.transform(data)
     print "Trasformed bag in %0.3fs." % (start - time())
+    return transformed_x
 
-    return feature_set, feature_names
+#    print data['body'].isnull().sum()
 
-# Feature Decomposition 
-
-def create_decomp(decomp_model, k):
-    #NMF, RandomizedPCA
-    return decomp_model(n_components=k)
-
-def transform_features(decomp_model, data):
-    start = time()
-    result = decomp_model.fit_transform(data.todense())
-    print "done in %0.3fs." % (start - time())
-    return result, decomp_model
-    # Are these different?
-
-
-# NMF Assess
-def top_vals(matrix, labels, num):
-    for idx, row in enumerate(matrix):    
-        print("Category #%d:" % idx)
-        print("| ".join([labels[i] for i in row.argsort()[:-num-1:-1]]))
-        print()
-
-def get_top_vals(H, W, feature_names, data, num):
-    print "H - Words"
-    print top_vals(H, feature_names, num)
-    print "W - Data Source"
-    print top_vals(W.T, data, num)
-
-def print_cloud(data, feature_names):
-    # Good for analyzing bag of words
-    for i in range(data.shape[0]):
-        word_dict = {feature_names[idx]: data[i][idx]*100 for idx in data[i].argsort()[:-20:-1]}
-        cloud = vincent.Word(word_dict)
-        print "Cloud", i
-        cloud.width = 400
-        cloud.height = 400
-        cloud.padding = 0
-        cloud.display()
-
-
-# PCA Assess
-def plot_scatter(x_pca, y_train):
-    colors = ['r', 'b']
-    markers = ['o', 's']
-    plt.figure(figsize=(20,10))
-
-    plt.xlim(-0.05, 0.45)
-    plt.ylim(-0.2, 0.8)
-    for i, c, m in zip(np.unique(y_train), colors, markers):
-        plt.scatter(x_pca[y_train == i, 0], 
-                    x_pca[y_train == i, 1],
-                    c=c, 
-                    marker=m, 
-                    label=i, 
-                    alpha=0.7, 
-                    s=200)
-
-    _ = plt.legend(loc='best')
-
-def model_in_action(data):
-
-    vectorizer = TfidfVectorizer
-    vect = create_vectorizer(vectorizer)
-    bag, feature_labels = create_bag(data, vect)
-    print 'in feature mode:', bag
-    return bag
+def create_vec_model(vectorizer=TfidfVectorizer, data=None):
+    if not data:
+        data = cpm.load_emails_pd()
+        data = data.body
+    print 'data shape', data.shape
+    vec_model = init_vectorizer(vectorizer)
+    feature_set = fit_vectorizer(data, vec_model)
+    return feature_set
 
 def main():
-    vectorizer = TfidfVectorizer
-    data = eda_main()
-#    print data['body'].isnull().sum()
-    
-    vect = create_vectorizer(vectorizer)
-    bag, feature_labels = create_bag(data, vect)
+    # call get_features_names on vectorizer model to get them
+    feature_set = create_vec_model()
+    cpm.pickle(feature_set, './model_pkl/final_vec.pkl')
+    return feature_set
 
-    if data.target:
-        return bag, data['target']
-    else:
-        return bag
-
-
-#     # bag_cv, feature_names_cv = create_bag(data['app description'], cv)
-#     bag_tf, feature_names_tf = create_bag(data['app description'], tf
-
-    # nmf = fit_nmf(7, bag.todense())
-
-
-# table_data = {
-#                 "priors": ["label_id integer, p_label float, FOREIGN KEY(label_id) REFERENCES label(rowid)", "p_label"],
-#                 "cpts": ["word_id integer, label_id integer, p_word_label float, FOREIGN KEY(word_id) REFERENCES word(rowid), FOREIGN KEY(label_id) REFERENCES label(rowid)", "label_id"],
-#         }
+ 
 
 if __name__ == '__main__':
     main()
