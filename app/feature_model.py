@@ -19,18 +19,24 @@ vincent.core.initialize_notebook()
 from time import time
 
 # Create Bag of Words / Features
-def create_vectorizer(vectorizer_object):
+def init_vectorizer(vectorizer_object):
     # tokens = nltk.word_tokenize(article)
     #vectorizer = vectorizer_object(min_df=2, strip_accents='unicode', max_features=5000, analyzer='word',token_pattern=r'\\w{1,}',ngram_range=(1, 2))
-    vectorizer = vectorizer_object(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 1), stop_words='english')
+    return vectorizer_object(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 1), stop_words='english')
+
+def fit_vectorizer(features, vectorizer):
+    start = time()
+    vectorizer.fit(features)    
+    print "Fit vectorizer in %0.3fs." % (start - time())
     return vectorizer
 
-def create_bag(features, vectorizer):
+def transform_bag(data, vectorizer):
     start = time()
-    bag_words = vectorizer.fit_transform(features)
-    feature_names = vectorizer.get_feature_names()
-    print "done in %0.3fs." % (start - time())
-    return bag_words, feature_names
+    feature_set = vectorizer.transform(data)
+    print 'feature_set:', bag_words
+    print "Trasformed bag in %0.3fs." % (start - time())
+
+    return feature_set, feature_names
 
 # Feature Decomposition 
 
@@ -90,14 +96,27 @@ def plot_scatter(x_pca, y_train):
 
     _ = plt.legend(loc='best')
 
+def model_in_action(data):
+
+    vectorizer = TfidfVectorizer
+    vect = create_vectorizer(vectorizer)
+    bag, feature_labels = create_bag(data, vect)
+    print 'in feature mode:', bag
+    return bag
+
 def main():
     vectorizer = TfidfVectorizer
     data = eda_main()
 #    print data['body'].isnull().sum()
-
+    
     vect = create_vectorizer(vectorizer)
-    bag, feature_labels = create_bag(data.body, vect)
-    return bag, data['target']
+    bag, feature_labels = create_bag(data, vect)
+
+    if data.target:
+        return bag, data['target']
+    else:
+        return bag
+
 
 #     # bag_cv, feature_names_cv = create_bag(data['app description'], cv)
 #     bag_tf, feature_names_tf = create_bag(data['app description'], tf
@@ -109,3 +128,6 @@ def main():
 #                 "priors": ["label_id integer, p_label float, FOREIGN KEY(label_id) REFERENCES label(rowid)", "p_label"],
 #                 "cpts": ["word_id integer, label_id integer, p_word_label float, FOREIGN KEY(word_id) REFERENCES word(rowid), FOREIGN KEY(label_id) REFERENCES label(rowid)", "label_id"],
 #         }
+
+if __name__ == '__main__':
+    main()
