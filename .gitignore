@@ -20,6 +20,7 @@ lib64
 
 # Data
 *data
+*model_pkl
 
 # Examples & Templates
 *text-featurization
@@ -29,7 +30,6 @@ twilio_ex.py
 
 # Tools
 *gmail
-*gmaillib.py
 
 # Installer logs
 pip-log.txt
@@ -47,5 +47,6 @@ ngrok
 
 #Workbooks
 *.ipynb
+
 
 
