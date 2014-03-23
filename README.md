@@ -108,3 +108,6 @@ Completed:
 ---------------
 Stuff:
 - Think of this project similar to spam filters where a false positive (email sent that needs a location) is more acceptible than a false negative (email not sent that needs a location)
+
+- To start ngrok use:
+    ./ngrok 80
