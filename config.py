@@ -11,6 +11,7 @@ from twilio.rest import TwilioRestClient
 signal(SIGPIPE,SIG_DFL) 
 
 
+
 SECRET_KEY = os.environ.get('key')
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
@@ -29,6 +30,7 @@ twilio_client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 conn = psycopg2.connect(database='jeeves_db', user=PSQL_USER) 
 db = conn.cursor()
 conn.set_session(autocommit=True)
+
 
 
 # Connect to postgres
