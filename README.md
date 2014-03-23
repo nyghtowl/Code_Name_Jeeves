@@ -7,24 +7,27 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 
 To Do:
 
-- Confirm full loop is closed - check into adding time.sleep and make sure gmail object working with script abstraction
+- Improve features
+    - Stem words
+    - n grams
+    - word shape adjustment
+    - Has date in text body
+    - combine subject with body words (also run with separate models)
+    - Remove certain words that are skewing the results - enable idf : inverse doc frequency reweighting? but does this impact meeting
+        - my name (so it is more abstract)
+
+
+- Closing loop - check into adding time.sleep and make sure gmail object working with script abstraction
 
 
 - Improve models
+    - Improve script on how multiple models are run and results shown
+        - Look at EC2 to help run
     - Finish Gradient Descent grid search
     - Work on tuning parameters - look at other ways to optimize alpha for naive bayes
     - Find an output for comparison of models
         - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
     - Work on train/test split and applying k-folds / stratified
-
-- Improve features
-    - Stem words
-    - word shape adjustment
-    - Has date in text body
-    - combine subject with body words (also run with separate models)
-    - n grams
-    - Remove certain words that are skewing the results
-        - my name (so it is more abstract)
 
 
 As Time Permits:
@@ -33,7 +36,7 @@ As Time Permits:
 
 - Other feature ideas / customization
     - Python NLP / Regex library
-    - length of thread
+    - length of thread (3+)
     - # email from an email address / new or not
     - email address in contacts or on Linkedin...
 - Run more EDA
@@ -42,10 +45,9 @@ As Time Permits:
 - Continue to look at dimensionality reduction approaches
 - Turn pipeline sections into classes/objects
 
-Nice to haves - will work on as time permits or when need a break:
-
-- Setup Gmail API to receive new mail
 - Setup code for my computer to "say" the classification outcome whent its true
+- Find way to stream in new email
+
 
 
 Visualization Ideas:
@@ -101,9 +103,11 @@ Completed:
     - Built classification model analysis with accuracy, roc plot, etc.
 - Built out code to fetch new email, check email and send text if true condition met - need to test
 - Built out alternative classification models: Random Forest, Gradient Boost, Ada Boost and SVC. Gradient Boost gave best results with plain out of the box
-- Applied grid search which sign improved Logistic Regression and Multinomial NB. 
+- Applied grid search which improved Logistic Regression and Multinomial NB. 
+- Applied grid search to Random Forest and SVC. SVC had the best result. Gradient Boost is taking too long to run right now.
+- Closed the loop and proved to take in an email classify and send a text
+- Cleaned up code / streamlined functions and connections between scrips.
 
-- Applied cPickle to save models because fast and commone solution. Sklearn has joblib which is similar and good for big data
 
 ---------------
 Stuff:
@@ -111,3 +115,7 @@ Stuff:
 
 - To start ngrok use:
     ./ngrok 80
+
+- Applied cPickle to save models because fast and commone solution. Sklearn has joblib which is similar and good for big data
+
+- python sendmail - send an email
