@@ -2,24 +2,12 @@
 Data EDA file - using pandas to look at data
 
 '''
-from config import conn, db
 
 import pandas as pd
 import numpy as np
 import seaborn
-# import vincent
-# vincent.core.initialize_notebook()
 
 import matplotlib.pyplot as plt
-
-from time import time
-from datetime import datetime
-
-# Load data from sql - add limit if there is too much data or only want to look at subset
-
-def load_data():
-    db.execute("SELECT * from raw_data")
-    return pd.DataFrame(db.fetchall(), columns=['message_id', 'thread_id', 'to_email', 'from_email', 'cc', 'date', 'subject', 'starred', 'body', 'target'])
 
 
 # Explore Data
@@ -69,13 +57,7 @@ def del_row(df, row_name):
 
 
 def main():
-    index_col = 'message_id'
-    raw_df = load_data()
-    raw_df = raw_df.set_index(index_col, drop=True, verify_integrity=True)
-
-    raw_df = add_col(raw_df, 'weekday', raw_df['date'].apply(lambda d: d.weekday()))
-    raw_df['body'] = raw_df['body'].fillna(value='empty')
-    return raw_df
+    pass
 
 if __name__ == '__main__':
     main()
