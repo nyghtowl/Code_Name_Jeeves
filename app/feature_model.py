@@ -11,20 +11,35 @@ create cpt tables and leverage naive bayes sql for this section
 
 import common as cpm
 
-from sklearn.decomposition import NMF, RandomizedPCA, TruncatedSVD
+
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.cross_validation import train_test_split
-import vincent
-vincent.core.initialize_notebook()
+
+from nltk import word_tokenize
+from nltk.stem.wordnet import WordNetLemmatizer
 
 from time import time
-import pandas as pd
+
+def stem_words(word):
+    lmtzr = WordNetLemmatizer()
+    return lmtzr.lemmatize(word)
+
+def nltk_tokenizer(raw):
+    tokens = word_tokenize(raw)
+    return [stem_words(word) for word in tokens]
+
+# Shape words - do this during tokenization
+# POS tagging ? 
+
+# Capture if date in body of text - True or False and add to feature set about doc...
+
+# Need to test vectorizer parameters in grid search
 
 # Create Bag of Words / Features
 def init_vectorizer(vectorizer_object):
-    # tokens = nltk.word_tokenize(article)
-    #vectorizer = vectorizer_object(min_df=2, strip_accents='unicode', max_features=5000, analyzer='word',token_pattern=r'\\w{1,}',ngram_range=(1, 2))
-    return vectorizer_object(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 1), stop_words='english')
+    # doesn't include punctuation
+    # norm='l1' = normalized token frequencies
+    # potentially good to add
+    return vectorizer_object(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', tokenizer=nltk_tokenizer)
 
 def fit_vectorizer(features, vectorizer):
     start = time()
@@ -38,8 +53,6 @@ def apply_features(data, feature_set):
     print "Trasformed bag in %0.3fs." % (start - time())
     return transformed_x
 
-#    print data['body'].isnull().sum()
-
 def create_vec_model(vectorizer=TfidfVectorizer, data=None):
     if not data:
         data = cpm.load_emails_pd()
@@ -49,13 +62,14 @@ def create_vec_model(vectorizer=TfidfVectorizer, data=None):
     feature_set = fit_vectorizer(data, vec_model)
     return feature_set
 
-def main():
+def main(safe=False):
     # call get_features_names on vectorizer model to get them
     feature_set = create_vec_model()
-    cpm.pickle(feature_set, './model_pkl/final_vec.pkl')
+    if save == True:
+        cpm.pickle(feature_set, './model_pkl/final_vec.pkl')
+    
     return feature_set
 
- 
 
 if __name__ == '__main__':
     main()
