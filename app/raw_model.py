@@ -86,3 +86,6 @@ def main():
     batch_get_emails('Career', datetime.date(2013, 5, 1))
     batch_get_emails('Hackday_Group', datetime.date(2013, 5, 1))
 # conn.close()
+
+if __name__ == '__main__':
+    main()

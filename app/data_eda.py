@@ -68,7 +68,6 @@ def del_row(df, row_name):
     del df[row_name, :]
 
 
-
 def main():
     index_col = 'message_id'
     raw_df = load_data()
