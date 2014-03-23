@@ -3,7 +3,9 @@ Email Classification Model
 
 '''
 # Need to replace this by pushing and pulling data from postgres or other persistant data source
-from feature_model import main as feature_main
+
+import app.common as cpm 
+import app.feature_model as fm
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,12 +20,10 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier,
 from sklearn.metrics import confusion_matrix, roc_curve, auc, accuracy_score, classification_report
 from sklearn.grid_search import GridSearchCV
 
-import cPickle # same as pickle but faster and implemented in C
-
 from time import time
 import os 
 
-# X is bag of words per email
+# X is features / bag of words per email
 # Y is target true and false per email
 
 def create_datasets(X, y, split_size=.30): # regularization sprint - cross val hyper
@@ -42,6 +42,9 @@ def build_model(model, X_train, y_train):
     model.fit(X_train, y_train)
     print "Train model in %0.2fs." % (start - time())
     return model
+
+def classify_email(model, X_test):
+    return model.predict(X_test)
 
 def model_eval(model, X_test, y_test):
     # The mean square error - how much the values can fluctuate - need for logistic
@@ -138,17 +141,11 @@ def grid_search(model, params, X_train, y_train,  n_jobs=-1, k_fold=3):
     return clf.best_params_, clf.best_estimator_
 
 
-def pickle_stuff(stuff, filename):
-    # use pkl for the filename and write in binary
-    with open(filename, 'wb') as f:
-        cPickle.dump(stuff, f)
-
-def unpickle_stuff(filename):
-    with open(filename, 'rb') as f:
-        return cPickle.load(f)
-
 def main():
-    X, y = feature_main()
+    data = cpm.load_emails_pd()
+    X = fm.apply_features(data.body, './model_pkl/final_vec.pkl')
+    y = data.target
+
     # model = LogisticRegression()
 
     # X_train, x_test, y_train, y_test = create_datasets(X, y)
