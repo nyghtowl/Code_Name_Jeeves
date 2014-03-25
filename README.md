@@ -8,9 +8,6 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 To Do:
 
 - Improve features
-    - Stem words
-    - n grams
-    - word shape adjustment
     - Has date in text body
     - combine subject with body words (also run with separate models)
     - Remove certain words that are skewing the results - enable idf : inverse doc frequency reweighting? but does this impact meeting
@@ -23,7 +20,6 @@ To Do:
 - Improve models
     - Improve script on how multiple models are run and results shown
         - Look at EC2 to help run
-    - Finish Gradient Descent grid search
     - Work on tuning parameters - look at other ways to optimize alpha for naive bayes
     - Find an output for comparison of models
         - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
@@ -107,6 +103,14 @@ Completed:
 - Applied grid search to Random Forest and SVC. SVC had the best result. Gradient Boost is taking too long to run right now.
 - Closed the loop and proved to take in an email classify and send a text
 - Cleaned up code / streamlined functions and connections between scrips.
+- Improved feature set with:
+    - stemming
+    - n-grams up to 3
+    - lowercase
+    - use_idf
+    - normalizing the data
+    - word shape adjustment
+
 
 
 ---------------
