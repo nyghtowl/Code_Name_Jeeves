@@ -9,6 +9,7 @@ import app.feature_model as fm
 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn 
 
 from scipy.stats.kde import gaussian_kde
 from sklearn.preprocessing import Binarizer
@@ -32,15 +33,15 @@ def create_datasets(X, y, split_size=.30): # regularization sprint - cross val h
 
 def print_test_train_shape(X_train, X_test, y_train, y_test):
 
-    print 'X_train:', shape(X_train)
-    print 'X_test:', shape(X_test)
-    print 'y_train:', shape(y_train)
-    print 'y_test:', shape(y_test)
+    print 'X_train:', X_train.shape
+    print 'X_test:', X_test.shape
+    print 'y_train:', y_train.shape
+    print 'y_test:', y_test.shape
 
 def build_model(model, X_train, y_train):
     start = time()
     model.fit(X_train, y_train)
-    print "Train model in %0.2fs." % (start - time())
+    print "Train model in %0.2fs." % (time() - start)
     return model
 
 def classify_email(model, X_test):
@@ -117,7 +118,7 @@ def plot_cross_val(model, X_test, y_test):
     _ = plt.title('Cross Validated Test Scores Distribution')
 
 
-def grid_search(model, params, X_train, y_train,  n_jobs=-1, k_fold=3):
+def grid_search(model, params, X_train, y_train,  n_jobs=1, k_fold=3):
     start = time()
     # Confirm param vals in list form otherwise grid search throws error
     #params = {k: (v if type(v) == list else [v]) for k, v in params.items() }
@@ -125,7 +126,7 @@ def grid_search(model, params, X_train, y_train,  n_jobs=-1, k_fold=3):
     clf = GridSearchCV(model, params, cv=k_fold, n_jobs=n_jobs)
     clf.fit(X_train, y_train)
     
-    print "Grid search model in %0.2fs." % (start - time())
+    print "Grid search model in %0.2fs." % (time()-start)
 
     print 'Best Estimators'
     print clf.best_estimator_
@@ -138,18 +139,38 @@ def grid_search(model, params, X_train, y_train,  n_jobs=-1, k_fold=3):
     # for params, mean_score, scores in clf.grid_scores_:
     #     print"%0.3f (+/-%0.03f) for %r" %(mean_score, scores.std(), params)
     
-    return clf.best_params_, clf.best_estimator_
+    return clf
 
+def rank_features(feature_names, class_model, axis=1,start_point=-20):
+    feature_names = np.asarray(feature_names)
+    for rank, feat_index in enumerate(np.argsort(class_model.coef_[0], axis=0)[start_point:], start=1):
+        print '%i: %s' % (rank, feature_names[feat_index])
 
 def main():
     data = cpm.load_emails_pd()
     X = fm.apply_features(data.body, './model_pkl/final_vec.pkl')
     y = data.target
+    '''
+    models = [LogisticRegression(), MultinomialNB(), SVC(), RandomForestClassifier(), GradientBoostingClassifier()]
+    params = {
+        'LogisticRegression': { 'penalty': ['l1','l2'], 'C': np.logspace(0, 9, 10), 'fit_intercept': [True, False], 'class_weight':['auto']},
+        'MultinomialNB':  {'alpha': np.logspace(0, 6, 7), 'fit_prior':[True, False]},
+        'SVC': { 'C': np.logspace(0, 9, 10), 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'shrinking':[True,False], 'probability':[True, False], 'class_weight':['auto']},
+        'RandomForestClassifier': {'n_estimators': np.arange(1, 200, 10), 'criterion':['gini', 'entropy'], 'bootstrap':[True,False], 'max_features': ['auto','sqrt','log2',None], 'oob_score':[True, False]},
+        'GradientBoostingClassifier': {'learning_rate':np.logspace(0.1, 1, 5), 'n_estimators': np.arange(50, 250, 25)}
+    }
 
-    # model = LogisticRegression()
+    params_revise = {
+    'LogisticRegression':{'C': np.linspace(approx_best_c/10., approx_best_c*10., 200)},
+    'MultinomialNB': {'alpha': np.linspace(approx_best_alpha/10., approx_best_alpha*10., 200)},
+    'SVC': {'C': np.linspace(svc_approx_params['C']/10., svc_approx_params['C']*10., 200) }
+    'RandomForestClassifier': {'n_estimators': np.arange(approx_best_n-50, approx_best_n+50, 1)},
+    'GradientBoostingClassifier': {'learning_rate': np.linspace(approx_best_learn/10., approx_best_learn*10., 100), 'n_estimators': np.arange(approx_best_n-50, approx_best_n+50, 1)}
+    }
+    '''
 
-    # X_train, x_test, y_train, y_test = create_datasets(X, y)
-
+    X_train, x_test, y_train, y_test = create_datasets(X, y)
+    print_test_train_shape(X_train, X_test, y_train, y_test)
     # model = build_model(model, X_train, y_train)
 
     # model_directory = 'model_pkl'
