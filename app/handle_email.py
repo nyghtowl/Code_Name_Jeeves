@@ -15,6 +15,9 @@ def check_email():
     print previous_check
     emails = cpm.get_emails('INBOX', previous_check)
 
+    if not emails: # avoid unpickling if empty inbox
+        return
+
     feature_model = cpm.unpickle('./model_pkl/final_vec.pkl')
     classifier_model = cpm.unpickle('./model_pkl/svc_322_2.pkl') # confirm location
 
@@ -22,6 +25,8 @@ def check_email():
         if email.sent_at > previous_check:
             clean_b = cpm.clean_raw_txt(email.body)
             # print 'clean_email', email.body
+            # TO DO catch errors - check for body of none
+
             email_features = feature_model.transform(clean_b)
             # print 'email_bag', email_features.shape
             classifier_result = classifier_model.predict(email_features)
@@ -33,7 +38,7 @@ def check_email():
 def eval_email(model_result, email):
     print "in eval", model_result == True
     print 'model_result', email
-    if model_result == True:
+    if model_result:
         message = create_message(email)
         print "message", message
         jeeves_notifications(message)
