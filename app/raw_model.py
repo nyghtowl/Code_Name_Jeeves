@@ -9,8 +9,9 @@ from config import connect_db
 import psycopg2
 import datetime
 import re
-import pdb
+import sys
 import app.common as cpm
+from time import time
 
 
 # Building the structure
@@ -28,8 +29,6 @@ def drop_table(name):
         db.execute('''DROP TABLE IF EXISTS %s;''' % (name))
 
 def build_tables(table_data):
-    # Use nvarchar in case storing non-english data
-
     for idx, (name, params) in enumerate(table_data.iteritems()):
         create_table(name, params[0])
         create_index(name, params[1])
@@ -37,6 +36,7 @@ def build_tables(table_data):
 # Getting and storing the raw data
 
 def store_email(email, box, email_owner):
+    # Use nvarchar in case storing non-english data
     target, starred = False, False
 
     # TO DO - make table name a variable
@@ -48,8 +48,8 @@ def store_email(email, box, email_owner):
     # in psycopg - var placeholder must be %s even with int or dates or other types
 
     # prep text for storage
-    body = cpm.clean_raw_text(email.body)
-    subject = cpm.clean_raw_text(email.subject)
+    body = cpm.clean_raw_txt(email.body)
+    subject = cpm.clean_raw_txt(email.subject)
     sub_body = subject + ' ' + body
 
     # Marks taget colum
@@ -65,14 +65,24 @@ def store_email(email, box, email_owner):
         except psycopg2.IntegrityError:
         # if exists then skip loading it
             with open('../not_needed/load_errors.txt', 'a') as f:
+                print "Problem loading email"
                 f.write(email.message_id, email_fr, body)
 
-def store_postgres(box, email_owner, date=datetime.datetime.now()):
+def get_data(box, email_owner, date):
+    start = time()
     emails = cpm.get_emails(box, date)
+    end = time()
+    print "Pulled gmail in %0.2fs." % (end - start)
     for email in emails:
-        store_email(email, box email_owner)
+        store_email(email, box, email_owner)
+    print "Stored emails in %0.2fs." % (time() - end)
 
-def main():
+def print_table_size(table):
+    with connect_db() as db:
+        db.execute('''SELECT count(*) from %s''' % table)
+        print db.fetchone()
+
+def main(box, email_owner, date=datetime.datetime.now()):
     table_data = {
                 "raw_data_2": [
                 "message_id varchar(255) not null, \
@@ -91,12 +101,13 @@ def main():
                 PRIMARY KEY(message_id)", "message_id"]
             }
     # would be good to check if table exists and only create if it doesn't
-    build_tables(table_data)
+    with connect_db() as db:
+        db.execute('''select * from information_schema.tables where table_name=%s''', ('raw_data_2',))
+        if not bool(db.rowcount):
+            build_tables(table_data)
 
-    store_database('INBOX', datetime.date(2013, 5, 1))
-    store_database('Career', datetime.date(2013, 5, 1))
-    store_database('Hackday_Group', datetime.date(2013, 5, 1))
-
+    get_data(box, email_owner, date)
+    print_table_size('raw_data_2')
 
 if __name__ == '__main__':
     main()
