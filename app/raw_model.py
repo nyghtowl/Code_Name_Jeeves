@@ -5,7 +5,7 @@ Storing raw(ish) email data
 
 '''
 
-from config import conn, db
+from config import connect_db
 import psycopg2
 import datetime
 import re
@@ -16,13 +16,16 @@ import app.common as cpm
 # Building the structure
 
 def create_table(table_name, values):
-    db.execute('''create table %s(%s)''' % (table_name, values))
+    with connect_db() as db:
+        db.execute('''create table %s(%s)''' % (table_name, values))
 
 def create_index(table_name, idx_col):
-    db.execute('''create index id_%s on %s (%s);''' % (table_name, table_name, idx_col)) 
+    with connect_db() as db:
+        db.execute('''create index id_%s on %s (%s);''' % (table_name, table_name, idx_col)) 
 
 def drop_table(name):
-    db.execute('''DROP TABLE IF EXISTS %s;''' % (name))
+    with connect_db() as db:
+        db.execute('''DROP TABLE IF EXISTS %s;''' % (name))
 
 def build_tables(table_data):
     # Use nvarchar in case storing non-english data
@@ -49,7 +52,8 @@ def store_email(email):
 
     # Could apply executemany with query and list of values but still need to do fetch first and apply changes
     try:
-        db.execute(store_e, (email.message_id, email.thread_id, email.to, email.fr, email.cc, email.sent_at, email.subject, starred, cpm.clean_raw_text(email.body), target))
+        with connect_db() as db:
+            db.execute(store_e, (email.message_id, email.thread_id, email.to, email.fr, email.cc, email.sent_at, email.subject, starred, cpm.clean_raw_text(email.body), target))
     except psycopg2.IntegrityError:
     # if exists then skip loading it
         pass
