@@ -7,11 +7,13 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 
 To Do:
 
+- Confirm the model results and how to handle the classification
+
+- reload the raw data to pull out dates and repeated script
+
 - Improve features
     - Has date in text body
     - combine subject with body words (also run with separate models)
-    - Remove certain words that are skewing the results - enable idf : inverse doc frequency reweighting? but does this impact meeting
-        - my name (so it is more abstract)
 
 
 - Closing loop - check into adding time.sleep and make sure gmail object working with script abstraction
@@ -110,7 +112,7 @@ Completed:
     - use_idf
     - normalizing the data
     - word shape adjustment
-
+    - Using use_idf drops the values on words like my name that show up across the corpus
 
 
 ---------------
