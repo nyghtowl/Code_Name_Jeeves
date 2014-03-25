@@ -36,53 +36,67 @@ def build_tables(table_data):
 
 # Getting and storing the raw data
 
-def store_email(email):
+def store_email(email, box, email_owner):
     target, starred = False, False
+
+    # TO DO - make table name a variable
     store_e = '''
-        insert into raw_data 
-        (message_id, thread_id, to_email, from_email, cc, date, subject, starred, body, target)
-        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        insert into raw_data_2 
+        (message_id, thread_id, to_email, from_email, cc, date, starred, subject, body, sub_body, email_owner, box, target)
+        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     '''
     # in psycopg - var placeholder must be %s even with int or dates or other types
 
+    # prep text for storage
+    body = cpm.clean_raw_text(email.body)
+    subject = cpm.clean_raw_text(email.subject)
+    sub_body = subject + ' ' + body
+
+    # Marks taget colum
     if 'Jeeves' in email.labels and '\\Starred' in email.labels:
         target = starred = True
     elif '\\Starred' in email.labels:
         starred = True
 
     # Could apply executemany with query and list of values but still need to do fetch first and apply changes
-    try:
-        with connect_db() as db:
-            db.execute(store_e, (email.message_id, email.thread_id, email.to, email.fr, email.cc, email.sent_at, email.subject, starred, cpm.clean_raw_text(email.body), target))
-    except psycopg2.IntegrityError:
-    # if exists then skip loading it
-        pass
+    with connect_db() as db:
+        try:
+            db.execute(store_e, (email.message_id, email.thread_id, email.to, email.fr, email.cc, email.sent_at, starred, subject, body, sub_body, email_owner, box, target))
+        except psycopg2.IntegrityError:
+        # if exists then skip loading it
+            with open('../not_needed/load_errors.txt', 'a') as f:
+                f.write(email.message_id, email_fr, body)
 
-def store_postgres(box, date=datetime.datetime.now()):
+def store_postgres(box, email_owner, date=datetime.datetime.now()):
     emails = cpm.get_emails(box, date)
     for email in emails:
-        store_email(email)
+        store_email(email, box email_owner)
 
 def main():
     table_data = {
-                "raw_data": [
+                "raw_data_2": [
                 "message_id varchar(255) not null, \
                 thread_id varchar(255), \
                 to_email text, \
                 from_email varchar(255), \
                 cc varchar(255), \
                 date timestamp, \
-                subject text, \
                 starred boolean, \
+                subject text, \
                 body text, \
+                sub_body text, \
+                email_owner varchar(255),\
+                box varchar(255), \
                 target boolean, \
                 PRIMARY KEY(message_id)", "message_id"]
             }
+    # would be good to check if table exists and only create if it doesn't
     build_tables(table_data)
+
     store_database('INBOX', datetime.date(2013, 5, 1))
     store_database('Career', datetime.date(2013, 5, 1))
     store_database('Hackday_Group', datetime.date(2013, 5, 1))
-# conn.close()
+
 
 if __name__ == '__main__':
     main()

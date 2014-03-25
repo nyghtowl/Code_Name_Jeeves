@@ -41,11 +41,13 @@ def get_emails(box, date=datetime.datetime.now()):
 def clean_raw_txt(text):
     # sample string literal issues found 0xc2, 0x20, \xa9, 0x80
     if text:
-        # Consider dropping everything after On since its a repeat <(On).+>
-        text = re.sub(r'(On)\s\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(PM|AM)(,)', r'', text)
+        # Dropping everything after On since its a repeat of threads
+        text = re.sub(r'(On)\s\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(PM|AM)(,)+', r'', text)
         text = text.replace('\r', '').replace('\n', ' ')
         text = re.sub(r'[\x80-\xff]', r'', text)
         text = re.sub(r'\s+', ' ', text)
+    else:
+        text = 'd' # prevent empyt values
     return text
 
 # Load data from sql to pandas - add limit if there is too much data or only want to look at subset
@@ -53,7 +55,7 @@ def clean_raw_txt(text):
 def load_data(table):
     with connect_db() as db:
         db.execute('''SELECT * from %s''' % table)
-        return pandas.DataFrame(db.fetchall(), columns=['message_id', 'thread_id', 'to_email', 'from_email', 'cc', 'date', 'subject', 'starred', 'body', 'target'])
+        return pandas.DataFrame(db.fetchall(), columns=['message_id', 'thread_id', 'to_email', 'from_email', 'cc', 'date', 'starred', 'subject', 'body', 'sub_body', 'email_owner', 'box','target'])
 
 def load_emails_pd():
     index_col = 'message_id'
