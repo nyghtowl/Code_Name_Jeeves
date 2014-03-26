@@ -1,16 +1,13 @@
 '''
-Jeeves Project
-
-Engineer and store features
+Find & Engineer Features
 
 create cpt tables and leverage naive bayes sql for this section
 
 '''
 
-# Need to replace this by pushing and pulling data from postgres or other persistant data source
-
 import common as cpm
 
+from config import pkl_dir
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
@@ -25,6 +22,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from time import time
 import string
 import re
+import os
 
 
 def drop_punc(word):
@@ -62,31 +60,31 @@ def fit_vectorizer(features, vectorizer):
     print "Fit vectorizer in %0.3fs." % (time() - start)
     return vectorizer
 
-def apply_features(vectorizer, data=None):
+def apply_feature_vector(vectorizer, data):
     start = time()
-    if not data:
-        data = cpm.load_emails_pd()
-        data = data.body
     feature_set = vectorizer.transform(data)
     print "Trasformed features in %0.3fs." % (time() - start)
     return feature_set
 
-def create_vec_model(vectorizer=TfidfVectorizer, data=None):
-    if not data:
-        data = cpm.load_emails_pd()
-        data = data.body
+def create_vec_model(data, vectorizer=TfidfVectorizer):
     print 'data shape', data.shape
     init_vect_model = init_vectorizer(vectorizer)
     fit_vect_model = fit_vectorizer(data, init_vect_model)
     return fit_vect_model, init_vect_model
 
 
-def main(save=False):
-    vectorizer, vec_model = create_vec_model()
-    feature_set = apply_features(vectorizer)
+def main(data=None, save=False, data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
+    if data is None:
+        data = cpm.unpickle(os.path.join(pkl_dir, data_fn))
+        data = data.body
+
+    vectorizer, vec_model = create_vec_model(data)
+
+    feature_set = apply_feature_vector(vectorizer, data)
     feature_names = vectorizer.get_feature_names()
+
     if save == True:
-        cpm.pickle(vectorizer, './model_pkl/final_vec.pkl')
+        cpm.pickle(vectorizer, os.path.join(pkl_dir, vec_fn))
     
     return vectorizer, feature_set, feature_names
 

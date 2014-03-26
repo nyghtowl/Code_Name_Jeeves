@@ -24,9 +24,9 @@ def create_index(table_name, idx_col):
     with connect_db() as db:
         db.execute('''create index id_%s on %s (%s);''' % (table_name, table_name, idx_col)) 
 
-def drop_table(name):
+def drop_table(table_name):
     with connect_db() as db:
-        db.execute('''DROP TABLE IF EXISTS %s;''' % (name))
+        db.execute('''DROP TABLE IF EXISTS %s;''' % (table_name))
 
 def build_tables(table_data):
     for idx, (name, params) in enumerate(table_data.iteritems()):
@@ -77,14 +77,15 @@ def get_data(box, email_owner, date):
         store_email(email, box, email_owner)
     print "Stored emails in %0.2fs." % (time() - end)
 
-def print_table_size(table):
+def print_table_size(table_name):
     with connect_db() as db:
-        db.execute('''SELECT count(*) from %s''' % table)
+        db.execute('''SELECT count(*) from %s''' % table_name)
         print db.fetchone()
 
 def main(box, email_owner, date=datetime.datetime.now()):
+    table_name = 'raw_data_2'
     table_data = {
-                "raw_data_2": [
+                table_name: [
                 "message_id varchar(255) not null, \
                 thread_id varchar(255), \
                 to_email text, \
@@ -102,12 +103,12 @@ def main(box, email_owner, date=datetime.datetime.now()):
             }
     # would be good to check if table exists and only create if it doesn't
     with connect_db() as db:
-        db.execute('''select * from information_schema.tables where table_name=%s''', ('raw_data_2',))
+        db.execute('''select * from information_schema.tables where table_name=%s''', (table_name,))
         if not bool(db.rowcount):
             build_tables(table_data)
 
     get_data(box, email_owner, date)
-    print_table_size('raw_data_2')
+    print_table_size(table_name)
 
 if __name__ == '__main__':
     main()

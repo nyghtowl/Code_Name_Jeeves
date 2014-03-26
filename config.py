@@ -31,6 +31,9 @@ PSQL_USER = os.environ.get('psql_user')
 
 twilio_client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
+pkl_dir = '../model_pkl'
+
+
 # Connect to postgres
 @contextmanager
 def connect_db():

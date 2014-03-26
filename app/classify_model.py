@@ -1,11 +1,11 @@
 '''
-Email Classification Model
+Email Classification Model Testing
 
 '''
-# Need to replace this by pushing and pulling data from postgres or other persistant data source
 
 import app.common as cpm 
 import app.feature_model as fm
+from config import pkl_dir
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -146,9 +146,13 @@ def rank_features(feature_names, class_model, axis=1,start_point=-20):
     for rank, feat_index in enumerate(np.argsort(class_model.coef_[0], axis=0)[start_point:], start=1):
         print '%i: %s' % (rank, feature_names[feat_index])
 
-def main():
-    data = cpm.load_emails_pd()
-    X = fm.apply_features(data.body, './model_pkl/final_vec.pkl')
+def main(data=None, model_fn='final_model.pkl', data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
+    if data is None:
+        data = cpm.unpickle(os.path.join(pkl_dir, data_fn))
+
+    vectorizer = cpm.unpickle(os.path.join(pkl_dir, vec_fn))
+
+    X = fm.apply_feature_vector(vectorizer, data.body)
     y = data.target
     '''
     models = [LogisticRegression(), MultinomialNB(), SVC(), RandomForestClassifier(), GradientBoostingClassifier()]
@@ -171,17 +175,15 @@ def main():
 
     X_train, x_test, y_train, y_test = create_datasets(X, y)
     print_test_train_shape(X_train, X_test, y_train, y_test)
-    # model = build_model(model, X_train, y_train)
-
-    # model_directory = 'model_pkl'
-    # if not os.path.exists(model_directory):
-    #     os.makedirs(model_directory)
-
-    # model_path = os.path.join(model_directory, filename)
-
-    # pickle_stuff(model, model_path)
     
-    return X, y
+    model = build_model(model_version, X_train, y_train)
+    
+    if save == True:
+        cpm.pickle(model, os.path.join(pkl_dir, model_fn))
+
+    return X, y, model
 
 if __name__ == '__main__':
+
+
     main()
