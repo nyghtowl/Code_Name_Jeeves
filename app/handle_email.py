@@ -26,18 +26,26 @@ def check_email():
         return
 
     feature_model = cpm.unpickle(os.path.join(pkl_dir, 'final_vec.pkl'))
-    classifier_model = cpm.unpickle(os.path.join(pkl_dir, 'final_model.pkl')) # confirm location
 
+    classifier_model = cpm.unpickle(os.path.join(pkl_dir, 'final_model.pkl')) # confirm location
+    print 'classifier model', classifier_model
+
+    # result = []
     for email in emails:
         if email.sent_at > previous_check:
             clean_b = cpm.clean_raw_txt(email.body)
-            # print 'clean_email', email.body
-            email_features = feature_model.transform(clean_b)
-            # print 'email_bag', email_features.shape
+            print 'clean_email', clean_b
+            email_features = feature_model.transform([clean_b])
+            print 'email_bag', email_features.shape
             classifier_result = classifier_model.predict(email_features)
-            #classifier_result
-            eval_email(classifier_result.mean(), email)
-    
+            
+            # print 'classifier_result', classifier_result
+
+            eval_email(classifier_result, email)
+
+            # result.append(classifier_result)
+
+    # return result    
     cpm.pickle(current_time, os.path.join(pkl_dir,'last_check_time.pkl'))
 
 def eval_email(model_result, email):
