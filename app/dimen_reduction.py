@@ -12,7 +12,7 @@ def create_decomp(decomp_model, k):
 def transform_features(decomp_model, data):
     start = time()
     result = decomp_model.fit_transform(data.todense())
-    print "done in %0.3fs." % (start - time())
+    print "done in %0.3fs." % (time() - start)
     return result, decomp_model
 
 

@@ -3,11 +3,12 @@ Common Project Methods
 
 '''
 
-from config import TEST_GMAIL_ID, TEST_GMAIL_PWD, connect_db
+from config import TEST_GMAIL_ID, TEST_GMAIL_PWD, connect_db, pkl_dir
 import pandas
 import datetime
 import gmail
 import re
+import os
 
 import cPickle # same as pickle but faster and implemented in C
 
@@ -52,18 +53,21 @@ def clean_raw_txt(text):
 
 # Load data from sql to pandas - add limit if there is too much data or only want to look at subset
 
-def load_data(table):
+def load_data(table, cols):
     with connect_db() as db:
         db.execute('''SELECT * from %s''' % table)
-        return pandas.DataFrame(db.fetchall(), columns=['message_id', 'thread_id', 'to_email', 'from_email', 'cc', 'date', 'starred', 'subject', 'body', 'sub_body', 'email_owner', 'box','target'])
+        return pandas.DataFrame(db.fetchall(), columns=cols)
 
-def load_emails_pd():
+def load_emails_pd(table, save=False, df_fn='pd_dataframe.pkl'):
     index_col = 'message_id'
-    raw_df = load_data('raw_data')
+    table_cols = ['message_id', 'thread_id', 'to_email', 'from_email', 'cc', 'date', 'starred', 'subject', 'body', 'sub_body', 'email_owner', 'box','target']
+    raw_df = load_data(table, table_cols)
     raw_df = raw_df.set_index(index_col, drop=True, verify_integrity=True)
     raw_df['weekday'] = raw_df['date'].apply(lambda d: d.weekday())
     raw_df['body'] = raw_df['body'].fillna(value='empty')
     #    print data['body'].isnull().sum()
+    if save:
+        pickle(raw_df, os.path.join(pkl_dir, df_fn))
     return raw_df
 
 if __name__ == '__main__':
