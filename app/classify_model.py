@@ -146,7 +146,7 @@ def rank_features(feature_names, class_model, axis=1,start_point=-20):
     for rank, feat_index in enumerate(np.argsort(class_model.coef_[0], axis=0)[start_point:], start=1):
         print '%i: %s' % (rank, feature_names[feat_index])
 
-def main(data=None, model_fn='final_model.pkl', data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
+def main(data=None, save=False, model_fn='final_model.pkl', data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
     if data is None:
         data = cpm.unpickle(os.path.join(pkl_dir, data_fn))
 
@@ -154,6 +154,8 @@ def main(data=None, model_fn='final_model.pkl', data_fn='pd_dataframe.pkl', vec_
 
     X = fm.apply_feature_vector(vectorizer, data.body)
     y = data.target
+
+    model_version = LogisticRegression(C=10000.0, penalty='l2', class_weight='auto', fit_intercept=True)
     '''
     models = [LogisticRegression(), MultinomialNB(), SVC(), RandomForestClassifier(), GradientBoostingClassifier()]
     params = {
@@ -173,12 +175,13 @@ def main(data=None, model_fn='final_model.pkl', data_fn='pd_dataframe.pkl', vec_
     }
     '''
 
-    X_train, x_test, y_train, y_test = create_datasets(X, y)
+    X_train, X_test, y_train, y_test = create_datasets(X, y)
     print_test_train_shape(X_train, X_test, y_train, y_test)
     
     model = build_model(model_version, X_train, y_train)
-    
-    if save == True:
+    print model
+
+    if save:
         cpm.pickle(model, os.path.join(pkl_dir, model_fn))
 
     return X, y, model

@@ -83,7 +83,7 @@ def main(data=None, save=False, data_fn='pd_dataframe.pkl', vec_fn='final_vec.pk
     feature_set = apply_feature_vector(vectorizer, data)
     feature_names = vectorizer.get_feature_names()
 
-    if save == True:
+    if save:
         cpm.pickle(vectorizer, os.path.join(pkl_dir, vec_fn))
     
     return vectorizer, feature_set, feature_names
