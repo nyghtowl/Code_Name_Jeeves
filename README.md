@@ -7,22 +7,17 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 
 To Do:
 
-- Confirm the model results and how to handle the classification
-
-- reload the raw data to pull out dates and repeated script
+- Improve code for producing the model and plot results to compare
+    - Logistic Regression
+    - Multinomial NB
+    - Random Forest
 
 - Improve features
     - Has date in text body
     - combine subject with body words (also run with separate models)
 
-
-- Closing loop - check into adding time.sleep and make sure gmail object working with script abstraction
-
-
 - Improve models
-    - Improve script on how multiple models are run and results shown
-        - Look at EC2 to help run
-    - Work on tuning parameters - look at other ways to optimize alpha for naive bayes
+    - Run comparison between at least two models
     - Find an output for comparison of models
         - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
     - Work on train/test split and applying k-folds / stratified
@@ -30,22 +25,22 @@ To Do:
 
 As Time Permits:
 - Look at pulling in other data sources
-- Update raw data structure to track where emails are from
 
 - Other feature ideas / customization
     - Python NLP / Regex library
     - length of thread (3+)
     - # email from an email address / new or not
     - email address in contacts or on Linkedin...
-- Run more EDA
 
+
+- Closing loop - check into cronjobs
+
+- Use Ec2 to run models / esp grid search
 
 - Continue to look at dimensionality reduction approaches
-- Turn pipeline sections into classes/objects
+- Turn pipeline sections into classes/objects?
 
 - Setup code for my computer to "say" the classification outcome whent its true
-- Find way to stream in new email
-
 
 
 Visualization Ideas:
@@ -58,7 +53,7 @@ Issues:
 - Duplication of data where there is a row per email no matter if its in a thread and emails typically contain duplications of the content from previous emails
     - should just pick one email out of  thread and one that has the latest date
     - Granted this is allowing resampling of the data
-- Facet Plot seems to extreme for words. Too many features and what value is there plotting features against features
+- Facet Plot seems too extreme for words. Too many features and what value is there plotting features against features
 
 
 - Resolved Anaconda, virtualenv and ipython issues
@@ -113,7 +108,12 @@ Completed:
     - normalizing the data
     - word shape adjustment
     - Using use_idf drops the values on words like my name that show up across the corpus
-
+- Updated raw data structure to track where emails are from
+- Confirmed the model results and how to handle the classification - fixed it basically
+- Reloaded the raw data to pull out dates and repeated script
+- Reworked the script to make more encapsulated and abstracted. Consolidated certain functions where possible and fixed variable names to improve code clarity
+- Built out grid search script to run pipeline
+- Set stage if I want to run multiple models with grid search
 
 ---------------
 Stuff:
