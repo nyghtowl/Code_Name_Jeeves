@@ -92,13 +92,25 @@ def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn
         pickle([X,y], os.path.join(pkl_dir, x_y_fn))
     return X, y
 
-def create_datasets(X=None, y=None, save=False, split_size=.30, x_y_fn= 'x_y_data.pkl',train_split_fn= 'train_split.pkl'):
+def get_x_y_data(data=None, x_y_fn= 'x_y_data.pkl'):
+    if data is None:
+        data = cpm.unpickle(os.path.join(pkl_dir, data_fn))
+
+    X, y = unpickle(os.path.join(pkl_dir, x_y_fn))
+    if X.empty:
+        print "New x y split saved."
+        X, y = cpm.define_x_y_data(data, True)
+    return X, y
+
+
+def create_datasets(X=None, y=None, save=False, split_size=.30,train_split_fn= 'train_split.pkl'):
     if X is None:
-        X, y = unpickle(os.path.join(pkl_dir, x_y_fn))
+        X, y = get_x_y_data()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split_size)
     if save:
         pickle([X_train, X_test, y_train, y_test], os.path.join(pkl_dir, train_split_fn))
     return X_train, X_test, y_train, y_test 
+
 
 def print_test_train_shape(X_train, X_test, y_train, y_test):
 
