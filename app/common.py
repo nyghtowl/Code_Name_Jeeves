@@ -4,6 +4,7 @@ Common Project Methods
 '''
 
 from config import TEST_GMAIL_ID, TEST_GMAIL_PWD, connect_db, pkl_dir
+from sklearn.cross_validation import train_test_split
 import pandas
 import datetime
 import gmail
@@ -12,7 +13,7 @@ import os
 
 import cPickle # same as pickle but faster and implemented in C
 
-# Context manager for context - with database 
+# Pickle
 
 def pickle(stuff, filename):
     # use pkl for the filename and write in binary
@@ -22,6 +23,10 @@ def pickle(stuff, filename):
 def unpickle(filename):
     with open(filename, 'rb') as f:
         return cPickle.load(f)
+
+###########################################################
+
+# Gmail
 
 def get_emails(box, date=datetime.datetime.now()):
     gmail_conn = gmail.login(TEST_GMAIL_ID, TEST_GMAIL_PWD)
@@ -53,6 +58,9 @@ def clean_raw_txt(text):
 
 # Load data from sql to pandas - add limit if there is too much data or only want to look at subset
 
+###########################################################
+# Pandas DataFrame
+
 def load_data(table, cols):
     with connect_db() as db:
         db.execute('''SELECT * from %s''' % table)
@@ -69,6 +77,35 @@ def load_emails_pd(table, save=False, df_fn='pd_dataframe.pkl'):
     if save:
         pickle(raw_df, os.path.join(pkl_dir, df_fn))
     return raw_df
+
+###########################################################
+# Data Split
+
+# Would be good to split text, cross val and train when there is more data
+
+def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn='pd_dataframe.pkl', x_y_fn= 'x_y_data.pkl'):
+    if data is None:
+        data = unpickle(os.path.join(pkl_dir, data_fn))
+    X = data[x_col]
+    y = data[y_col]
+    if save:
+        pickle([X,y], os.path.join(pkl_dir, x_y_fn))
+    return X, y
+
+def create_datasets(X=None, y=None, save=False, split_size=.30, x_y_fn= 'x_y_data.pkl',train_split_fn= 'train_split.pkl'):
+    if X is None:
+        X, y = unpickle(os.path.join(pkl_dir, x_y_fn))
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split_size)
+    if save:
+        pickle([X_train, X_test, y_train, y_test], os.path.join(pkl_dir, train_split_fn))
+    return X_train, X_test, y_train, y_test 
+
+def print_test_train_shape(X_train, X_test, y_train, y_test):
+
+    print 'X_train:', X_train.shape
+    print 'X_test:', X_test.shape
+    print 'y_train:', y_train.shape
+    print 'y_test:', y_test.shape
 
 if __name__ == '__main__':
     main()
