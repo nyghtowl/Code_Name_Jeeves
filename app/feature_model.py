@@ -56,18 +56,13 @@ def apply_feature_vector(vectorizer, data):
     print "Trasformed features in %0.3fs." % (time() - start)
     return feature_set
 
-def main(data=None, save=False, data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
+def main(save=False, data=None, data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
 
     vectorizer_model = TfidfVectorizer(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', tokenizer=nltk_tokenizer, use_idf=True)
 
-    X_raw, y = cpm.unpickle(os.path.join(pkl_dir, 'x_y_data.pkl'))
-
-    if X_raw.empty:
-        X_raw, y = cpm.define_x_y_data(data, True)
-
+    X_raw, y = cpm.get_x_y_data(data)
+    
     vectorizer = create_vec_model(vectorizer_model, X_raw)
-
-    # feature_set = apply_feature_vector(vectorizer, X_raw)
 
     if save:
         print "New vectorizer saved."
