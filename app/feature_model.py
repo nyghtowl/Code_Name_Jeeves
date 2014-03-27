@@ -24,6 +24,7 @@ import string
 import re
 import os
 
+# POS tagging ? 
 
 def drop_punc(word):
     regex = re.compile('[%s]' % re.escape(string.punctuation))
@@ -40,25 +41,14 @@ def nltk_tokenizer(raw):
     tokens = word_tokenize(raw)
     return [stem_words(change_num(drop_punc(word.strip()))) for word in tokens]
 
-# Shape words - do this during tokenization
-# POS tagging ? 
-
 # Capture if date in body of text - True or False and add to feature set about doc...
 
-# Need to test vectorizer parameters in grid search
-
-# Create Bag of Words / Features
-def init_vectorizer(vectorizer_object):
-    # doesn't include punctuation
-    # norm='l1' = normalized token frequencies
-    # potentially good to add
-    return vectorizer_object(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', tokenizer=nltk_tokenizer, use_idf=True)
-
-def fit_vectorizer(features, vectorizer):
+def create_vec_model(vectorizer, data):
     start = time()
-    vectorizer.fit(features)    
+    print 'data shape', data.shape
+    fit_vect_model = vectorizer.fit(data)    
     print "Fit vectorizer in %0.3fs." % (time() - start)
-    return vectorizer
+    return fit_vect_model
 
 def apply_feature_vector(vectorizer, data):
     start = time()
@@ -66,27 +56,24 @@ def apply_feature_vector(vectorizer, data):
     print "Trasformed features in %0.3fs." % (time() - start)
     return feature_set
 
-def create_vec_model(data, vectorizer=TfidfVectorizer):
-    print 'data shape', data.shape
-    init_vect_model = init_vectorizer(vectorizer)
-    fit_vect_model = fit_vectorizer(data, init_vect_model)
-    return fit_vect_model, init_vect_model
-
-
 def main(data=None, save=False, data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
-    if data is None:
-        data = cpm.unpickle(os.path.join(pkl_dir, data_fn))
-        data = data.body
 
-    vectorizer, vec_model = create_vec_model(data)
+    vectorizer_model = TfidfVectorizer(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', tokenizer=nltk_tokenizer, use_idf=True)
 
-    feature_set = apply_feature_vector(vectorizer, data)
-    feature_names = vectorizer.get_feature_names()
+    X_raw, y = cpm.unpickle(os.path.join(pkl_dir, 'x_y_data.pkl'))
+
+    if X_raw.empty:
+        X_raw, y = cpm.define_x_y_data(data, True)
+
+    vectorizer = create_vec_model(vectorizer_model, X_raw)
+
+    # feature_set = apply_feature_vector(vectorizer, X_raw)
 
     if save:
+        print "New vectorizer saved."
         cpm.pickle(vectorizer, os.path.join(pkl_dir, vec_fn))
     
-    return vectorizer, feature_set, feature_names
+    return vectorizer
 
 
 if __name__ == '__main__':
