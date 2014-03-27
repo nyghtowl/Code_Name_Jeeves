@@ -10,14 +10,18 @@ To Do:
 - Improve code for producing the model and plot results to compare
     - Logistic Regression
     - Multinomial NB
-    - Random Forest
+    - SVC
+
+    - Work on split data to make sure same across all
+    - Grid Search
+    - Cross Val
 
 - Improve features
+    - Pass subject and body through model
     - Has date in text body
     - combine subject with body words (also run with separate models)
 
 - Improve models
-    - Run comparison between at least two models
     - Find an output for comparison of models
         - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
     - Work on train/test split and applying k-folds / stratified
@@ -35,7 +39,7 @@ As Time Permits:
 
 - Closing loop - check into cronjobs
 
-- Use Ec2 to run models / esp grid search
+- Use Ec2, picloud(install package - pass function and arguments and it goes up to EC2) to run models / esp grid search
 
 - Continue to look at dimensionality reduction approaches
 - Turn pipeline sections into classes/objects?
@@ -64,7 +68,7 @@ Data:
 
 Stored in Postgres DB
 
-~800+ emails total
+~1000+ emails total
 ~120 emails meet target conditions (may be smaller based on thread emails)
 
 Raw Data:
