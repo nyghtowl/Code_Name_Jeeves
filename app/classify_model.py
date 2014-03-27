@@ -47,7 +47,7 @@ def build_model(model, X_train, y_train):
 def classify_email(model, X_test):
     return model.predict(X_test)
 
-def model_eval(model, X_test, y_test):
+def model_eval(model, X_test, y_test, save=False):
     # The mean square error - how much the values can fluctuate - need for logistic
     # print('Root Mean Squared Error: %.2f' % ((np.mean((model.predict(X_test) - y_test) ** 2))**(0.5)))
 
@@ -58,6 +58,7 @@ def model_eval(model, X_test, y_test):
     # print 'SKLearn Prediction Accuracy Score: %.5f' % accuracy_score(y_test, y_pred) 
 
     y_pred = model.predict(X_test)
+    y_proba = model.predict_log_proba(X_test)
 
     print 'SKLearn Accuracy Score: %.5f' % model.score(X_test, y_test)
 
@@ -68,33 +69,43 @@ def model_eval(model, X_test, y_test):
     cm = confusion_matrix(y_test, y_pred, labels)
     print 'Confusion Matrix:'
     print cm
-    plot_confusion_matrix(cm, labels)
-    plot_roc_curve(y_test, y_pred)
+    cm_plot = plot_confusion_matrix(cm, labels, save)
+    plot_roc_curve(y_test, y_proba, save)
 
-def plot_confusion_matrix(cm, labels):
+
+def plot_confusion_matrix(cm, labels, save):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     cax = ax.matshow(cm)
-    plt.title('Email Classifier Confusion Matrix (identifying email that needs a meeting')
+    plt.title('Email Confusion Matrix (True = email needs location)', fontsize=16)
     fig.colorbar(cax)
-    ax.set_xticklabels([''] + labels)
-    ax.set_yticklabels([''] + labels)
-    plt.xlabel('Predicted')
-    plt.ylabel('Actual')
+    ax.set_xticklabels([''] + labels, fontsize=13)
+    ax.set_yticklabels([''] + labels, fontsize=13)
+    plt.xlabel('Predicted', fontsize=14)
+    plt.ylabel('Actual', fontsize=14)
+    if save:
+        # os.path.join(pkl_dir, ''
+        plt.savefig('./graph_dir/cfm.png')
     plt.show()
 
-def plot_roc_curve(y_test, y_pred):
+def plot_roc_curve(y_test, y_proba, save):
     # Receiver operating characteristic - if line is close to top left its a good model fit
-    fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+    fpr, tpr, thresholds = roc_curve(y_test, y_proba[:,1])
     roc_auc = auc(fpr, tpr) # same as roc_auc_score method
     plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)
     plt.plot((0, 1), (0, 1), 'k--')  # random predictions curve
     plt.xlim(0.0, 1.0)
     plt.ylim(0.0, 1.0)
-    plt.xlabel('False Positive Rate or (1 - Specifity)')
-    plt.ylabel('True Positive Rate or (Sensitivity)')
-    plt.title('Receiver Operating Characteristic Curve')
+    plt.title('Email Classifier ROC Curve', fontsize=16)
+    plt.xlabel('False Positive Rate or (1 - Specifity)', fontsize=14)
+    plt.ylabel('True Positive Rate or (Sensitivity)', fontsize=14)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
     plt.legend(loc='lower right')
+    if save:
+        # os.path.join(pkl_dir, ''
+        plt.savefig('./graph_dir/roc_plot.png')
+
 
 # Add precision recall curve - similar to roc curve - shows how sold true is in comparison to true and false positives
 
