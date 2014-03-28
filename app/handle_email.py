@@ -45,6 +45,8 @@ def check_email():
 
             # result.append(classifier_result)
 
+            # TO DO - pass to say 
+            
     # return result    
     cpm.pickle(current_time, os.path.join(pkl_dir,'last_check_time.pkl'))
 

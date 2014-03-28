@@ -92,9 +92,9 @@ def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn
         pickle([X,y], os.path.join(pkl_dir, x_y_fn))
     return X, y
 
-def get_x_y_data(data=None, x_y_fn= 'x_y_data.pkl'):
+def get_x_y_data(data=None, x_y_fn= 'x_y_data.pkl', data_fn='pd_dataframe.pkl'):
     if data is None:
-        data = cpm.unpickle(os.path.join(pkl_dir, data_fn))
+        data = unpickle(os.path.join(pkl_dir, data_fn))
 
     X, y = unpickle(os.path.join(pkl_dir, x_y_fn))
     if X.empty:

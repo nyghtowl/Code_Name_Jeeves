@@ -215,6 +215,7 @@ def main(model_names, save=False, model_fn='final_model.pkl', new_data_split=Fal
         X_raw, y = cpm.get_x_y_data(data)
         X_vect = fm.apply_feature_vector(vectorizer, X_raw)
         X_train, X_test, y_train, y_test = cpm.create_datasets(X_vect, y, True)
+        cpm.pickle(os.path.join(pkl_dir, 'train_split.pkl'))
     else:
         X_train, X_test, y_train, y_test = cpm.unpickle(os.path.join(pkl_dir, 'train_split.pkl'))
 
