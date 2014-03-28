@@ -7,19 +7,21 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 
 To Do:
 
-- Improve code for producing the model and plot results to compare
-    - Logistic Regression
-    - Multinomial NB
-    - SVC
+- Use random parameter to maintain split and chance test train split to take place after vectorized
 
-    - Work on split data to make sure same across all
-    - Grid Search
-    - Cross Val
+- Fix - get feature names is incorrect right now because vectorize and get features taking place after split...
 
 - Improve features
     - Pass subject and body through model
     - Has date in text body
     - combine subject with body words (also run with separate models)
+
+
+- get new data to test teh validity of the classifier
+
+- Improve code for producing the model and plot results to compare
+    - Grid Search again to improve parameters
+    - show cross val scores
 
 - Improve models
     - Find an output for comparison of models
@@ -28,7 +30,6 @@ To Do:
 
 
 As Time Permits:
-- Look at pulling in other data sources
 
 - Other feature ideas / customization
     - Python NLP / Regex library
@@ -36,15 +37,16 @@ As Time Permits:
     - # email from an email address / new or not
     - email address in contacts or on Linkedin...
 
-
 - Closing loop - check into cronjobs
+
+- Setup code for my computer to "say" the classification outcome whent its true
 
 - Use Ec2, picloud(install package - pass function and arguments and it goes up to EC2) to run models / esp grid search
 
 - Continue to look at dimensionality reduction approaches
+
 - Turn pipeline sections into classes/objects?
 
-- Setup code for my computer to "say" the classification outcome whent its true
 
 
 Visualization Ideas:
