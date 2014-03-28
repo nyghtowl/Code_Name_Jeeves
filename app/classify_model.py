@@ -4,7 +4,6 @@ Email Classification Model Testing
 '''
 
 import app.common as cpm 
-import app.feature_model as fm
 from config import pkl_dir, graph_dir
 
 import numpy as np
@@ -139,7 +138,7 @@ def rank_features(model_name, feature_names, class_model_coef, start_point=-20):
     for rank, feat_index in enumerate(np.argsort(class_model_coef, axis=0)[start_point:], start=1):
         print '%i: %s' % (rank, feature_names[feat_index])
 
-def plot_cross_val(model_name, model, X_test, y_test, save):
+def plot_cross_val(model_name, model, X_test, y_test, save, graph_fn='cross_val.png'):
     print '%s Cross Validation Scores:' % model_name
     cv_scores = cross_val_score(model, X_test, y_test, cv=3, scoring='roc_auc')
 
@@ -162,10 +161,10 @@ def plot_cross_val(model_name, model, X_test, y_test, save):
 
     _ = plt.title('Cross Validated Test Scores Distribution')
     if save:
-        # os.path.join(graph_dir, ''
-        plt.savefig('./graph_dir/cross_val.png')
+        plt.savefig(os.path.join(graph_dir, graph_fn))
+        # plt.savefig('./graph_dir/cross_val.png')
 
-def plot_roc_curve(model_names, models, X_test, y_test, save=False, roc_fn='roc_plot.png'):
+def plot_roc_curve(model_names, models, X_test, y_test, save=False, graph_fn='roc_plot.png'):
     for i, model in enumerate(models):
         y_proba = model.predict_proba(X_test)
         fpr, tpr, thresholds = roc_curve(y_test, y_proba[:,1])
@@ -182,8 +181,8 @@ def plot_roc_curve(model_names, models, X_test, y_test, save=False, roc_fn='roc_
     plt.yticks(fontsize=10)
     plt.legend(loc='lower right')
     if save:
-        plt.savefig(os.path.join(graph_dir, roc_fn))
-        plt.savefig('./graph_dir/roc_plot.png')
+        plt.savefig(os.path.join(graph_dir, graph_fn))
+        # plt.savefig('./graph_dir/roc_plot.png')
 
 
 # Add precision recall curve - similar to roc curve - shows how sold true is in comparison to true and false positives
@@ -207,17 +206,13 @@ def run_model(model_name, model, data_set, feature_names, save=False):
 
     return model
 
-def main(model_names, save=False, model_fn='final_model.pkl', new_data_split=False, data=None, vec_fn='final_vec.pkl'):
+def main(model_names, save=False, train_fn='train_split.pkl', model_fn='final_model.pkl', new_data_split=False):
 
-    vectorizer = cpm.unpickle(os.path.join(pkl_dir, vec_fn))
-
-    if new_data_split:
-        X_raw, y = cpm.get_x_y_data(data)
-        X_vect = fm.apply_feature_vector(vectorizer, X_raw)
-        X_train, X_test, y_train, y_test = cpm.create_datasets(X_vect, y, True)
-        cpm.pickle(os.path.join(pkl_dir, 'train_split.pkl'))
+    if new_data_split: # 
+        X, y = cpm.get_x_y_data()
+        X_train, X_test, y_train, y_test = cpm.create_datasets(X, y, True)
     else:
-        X_train, X_test, y_train, y_test = cpm.unpickle(os.path.join(pkl_dir, 'train_split.pkl'))
+        X_train, X_test, y_train, y_test = cpm.unpickle(os.path.join(pkl_dir, train_fn))
 
     X_train = X_train.todense()
     X_test = X_test.todense()
@@ -238,7 +233,7 @@ def main(model_names, save=False, model_fn='final_model.pkl', new_data_split=Fal
     model_results = []
 
     for model in model_names:
-        model_results.append(run_model(model, class_model[model], [X_train, X_test, y_train, y_test],vectorizer.get_feature_names()))
+        model_results.append(run_model(model, class_model[model], [X_train, X_test, y_train, y_test], cpm.get_feature_names()))
 
     plot_roc_curve(model_names[:len(model_results)], model_results, X_test, y_test)
 
