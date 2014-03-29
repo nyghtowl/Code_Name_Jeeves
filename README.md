@@ -7,21 +7,15 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 
 To Do:
 
-- Use random parameter to maintain split and chance test train split to take place after vectorized
-
-- Fix - get feature names is incorrect right now because vectorize and get features taking place after split...
-
 - Improve features
     - Pass subject and body through model
     - Has date in text body
     - combine subject with body words (also run with separate models)
 
-
-- get new data to test teh validity of the classifier
+- get new data to test the validity of the classifier
 
 - Improve code for producing the model and plot results to compare
     - Grid Search again to improve parameters
-    - show cross val scores
 
 - Improve models
     - Find an output for comparison of models
@@ -120,6 +114,11 @@ Completed:
 - Reworked the script to make more encapsulated and abstracted. Consolidated certain functions where possible and fixed variable names to improve code clarity
 - Built out grid search script to run pipeline
 - Set stage if I want to run multiple models with grid search
+- Used random parameter to maintain split and changed test train split to take place after vectorized
+- Tried different approaches with vectorizer
+    - Utilized subject and body text in vectorizer
+    - Expanded the num of vectorizer features and pulled strip out of word adjustment because seemed to be collapsing words incorrectly 
+- Added in cross validation scores for output
 
 ---------------
 Stuff:
@@ -131,3 +130,9 @@ Stuff:
 - Applied cPickle to save models because fast and commone solution. Sklearn has joblib which is similar and good for big data
 
 - python sendmail - send an email
+
+
+---------------
+Points to Note:
+
+Tfidf - very min impact if do all features vs max 10000
