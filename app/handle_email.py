@@ -34,8 +34,9 @@ def check_email():
     for email in emails:
         if email.sent_at > previous_check:
             clean_b = cpm.clean_raw_txt(email.body)
-            print 'clean_email', clean_b
-            email_features = feature_model.transform([clean_b])
+            clean_s = cpm.clean_raw_txt(email.sub_body)
+            print 'clean_email', clean_s, clean_b
+            email_features = feature_model.transform([clean_b+clean_s])
             print 'email_bag', email_features.shape
             classifier_result = classifier_model.predict(email_features)
             
