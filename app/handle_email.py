@@ -27,37 +27,36 @@ def check_email():
 
     feature_model = cpm.unpickle(os.path.join(pkl_dir, 'final_vec.pkl'))
 
-    classifier_model = cpm.unpickle(os.path.join(pkl_dir, 'final_model.pkl')) # confirm location
+    classifier_model = cpm.unpickle(os.path.join(pkl_dir, 'final_model.pkl')) 
+    
     print 'classifier model', classifier_model
 
-    # result = []
     for email in emails:
         if email.sent_at > previous_check:
             clean_b = cpm.clean_raw_txt(email.body)
-            clean_s = cpm.clean_raw_txt(email.sub_body)
+            clean_s = cpm.clean_raw_txt(email.subject)
             print 'clean_email', clean_s, clean_b
             email_features = feature_model.transform([clean_b+clean_s])
             print 'email_bag', email_features.shape
             classifier_result = classifier_model.predict(email_features)
             
-            # print 'classifier_result', classifier_result
-
             eval_email(classifier_result, email)
 
-            # result.append(classifier_result)
-
-            # TO DO - pass to say 
-            
-    # return result    
     cpm.pickle(current_time, os.path.join(pkl_dir,'last_check_time.pkl'))
 
 def eval_email(model_result, email):
-    print "in eval", model_result == True
+    print "in eval", model_result
     print 'model_result', email
-    if model_result:
+    #thread_ids_reported = []
+
+    if model_result: #and email.thread_id not in thread_ids_reported:
+        #thread_ids_reported.append(email.thread_id)
         message = create_message(email)
         print "message", message
         jeeves_notifications(message)
+        os.system('say %s' % message)
+
+        #cpm.pickle(os.path.join(pkl_dir, 'thread_ids.pkl'))
 
 def create_message(email):
     # add date for meeting into message...
