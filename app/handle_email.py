@@ -54,7 +54,7 @@ def eval_email(model_result, email):
         message = create_message(email)
         print "message", message
         jeeves_notifications(message)
-        os.system('say %s' % message)
+        os.system("say %s" % message)
 
         #cpm.pickle(os.path.join(pkl_dir, 'thread_ids.pkl'))
 
