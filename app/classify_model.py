@@ -8,6 +8,7 @@ from config import pkl_dir, graph_dir
 
 import numpy as np
 import matplotlib.pyplot as plt
+from pylab import cm
 import seaborn 
 
 from scipy.stats.kde import gaussian_kde
@@ -98,6 +99,12 @@ def model_eval(model_name, model, X_test, y_test, y_pred, feature_names, save=Fa
     print 
     create_confusion_matrix(model_name, y_test, y_pred, save)
     print 
+    print '%s Cross Validation Scores:' % model_name
+    cv_scores = cross_val_score(model, X_test, y_test, cv=5, scoring='roc_auc')
+
+    print 'Min Score = %f\nMean Score = %f\nMax Score = %f' % (cv_scores.min(), cv_scores.mean(), cv_scores.max())
+
+    print
     if model_name == 'RandomForest' or model_name == 'GradientBoost':
         rank_features(model_name, feature_names, model.feature_importances_)
     else:
@@ -111,18 +118,18 @@ def model_eval(model_name, model, X_test, y_test, y_pred, feature_names, save=Fa
 
 def create_confusion_matrix(model_name, y_test, y_pred, save):
     labels = [True, False]
-    cm = confusion_matrix(y_test, y_pred, labels)
+    conf_matrix = confusion_matrix(y_test, y_pred, labels)
     print '%s Confusion Matrix:' % model_name
-    print cm
+    print conf_matrix
     print
-    cm_plot = plot_confusion_matrix(model_name, cm, labels, save)
+    cm_plot = plot_confusion_matrix(model_name, conf_matrix, labels, save)
 
-def plot_confusion_matrix(model_name, cm, labels, save):
+def plot_confusion_matrix(model_name, conf_matrix, labels, save):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    cax = ax.matshow(cm)
-    plt.title('%s Email Confusion Matrix (True = email needs location)' % model_name, fontsize=16)
+    cax = ax.matshow(conf_matrix, cmap=cm.cubehelix_r)
     fig.colorbar(cax)
+    plt.title('%s Email Confusion Matrix (True = email needs location)' % model_name, fontsize=16)
     ax.set_xticklabels([''] + labels, fontsize=13)
     ax.set_yticklabels([''] + labels, fontsize=13)
     plt.xlabel('Predicted', fontsize=14)
@@ -139,10 +146,8 @@ def rank_features(model_name, feature_names, class_model_coef, start_point=-20):
         print '%i: %s' % (rank, feature_names[feat_index])
 
 def plot_cross_val(model_name, model, X_test, y_test, save, graph_fn='cross_val.png'):
-    print '%s Cross Validation Scores:' % model_name
+    print '%s Cross Validation Scores Plot:' % model_name
     cv_scores = cross_val_score(model, X_test, y_test, cv=3, scoring='roc_auc')
-
-    print 'Min Score = %f\nMean Score = %f\nMax Score = %f' % (cv_scores.min(), cv_scores.mean(), cv_scores.max())
     
     plt.figure(figsize=(20,10))
 
@@ -233,9 +238,9 @@ def main(model_names, save=False, train_fn='train_split.pkl', model_fn='final_mo
     model_results = []
 
     for model in model_names:
-        model_results.append(run_model(model, class_model[model], [X_train, X_test, y_train, y_test], cpm.get_feature_names()))
+        model_results.append(run_model(model, class_model[model], [X_train, X_test, y_train, y_test], cpm.get_feature_names(), save))
 
-    plot_roc_curve(model_names[:len(model_results)], model_results, X_test, y_test)
+    plot_roc_curve(model_names[:len(model_results)], model_results, X_test, y_test, True)
 
 
     return model_results
