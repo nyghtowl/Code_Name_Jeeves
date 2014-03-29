@@ -19,6 +19,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 #english_corpus = set(w.lower() for w in words.words())
 #import SnowballTokenizer
 
+from dateutil.parser import parse
 from time import time
 import string
 import re
@@ -39,7 +40,7 @@ def stem_words(word):
 
 def nltk_tokenizer(raw):
     tokens = word_tokenize(raw)
-    return [stem_words(change_num(drop_punc(word.strip()))) for word in tokens]
+    return [stem_words(change_num(drop_punc(word))) for word in tokens]
 
 # Capture if date in body of text - True or False and add to feature set about doc...
 
@@ -56,13 +57,15 @@ def apply_feature_vector(vectorizer, data):
     print "Trasformed features in %0.3fs." % (time() - start)
     return feature_set
 
-def main(save=False, data=None, data_fn='pd_dataframe.pkl', vec_fn='final_vec.pkl'):
+
+def main(save=False, X=None, vec_fn='final_vec.pkl', data_fn='pd_dataframe.pkl'):
 
     vectorizer_model = TfidfVectorizer(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', tokenizer=nltk_tokenizer, use_idf=True)
 
-    X_raw, y = cpm.get_x_y_data(data)
+    if X is None:
+        X, y = cpm.get_x_y_data(data)
     
-    vectorizer = create_vec_model(vectorizer_model, X_raw)
+    vectorizer = create_vec_model(vectorizer_model, X)
 
     if save:
         print "New vectorizer saved."
