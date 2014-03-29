@@ -83,10 +83,10 @@ def load_emails_pd(table, save=False, df_fn='pd_dataframe.pkl'):
 
 # Would be good to split text, cross val and train when there is more data
 
-def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn='pd_dataframe.pkl', x_y_fn= 'x_y_data.pkl'):
+def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn='pd_dataframe.pkl', x_y_fn= 'x_y_data.pkl', vec_fn='final_vec.pkl'):
     if data is None:
         data = unpickle(os.path.join(pkl_dir, data_fn))
-    vectorizer = unpickle(os.path.join(pkl_dir, 'final_vec.pkl'))
+    vectorizer = unpickle(os.path.join(pkl_dir, vec_fn))
 
     X, y = vectorizer.transform(data[x_col]), data[y_col] 
     
