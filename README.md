@@ -8,7 +8,6 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 To Do:
 
 - Improve features
-    - Pass subject and body through model
     - Has date in text body
     - combine subject with body words (also run with separate models)
 
@@ -20,20 +19,19 @@ To Do:
 - Improve models
     - Find an output for comparison of models
         - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
-    - Work on train/test split and applying k-folds / stratified
+    - Work on applying k-folds / stratified
 
 
 As Time Permits:
+- Try Porter for stemming
 
 - Other feature ideas / customization
-    - Python NLP / Regex library
+    - Python NLP - Regex library
     - length of thread (3+)
     - # email from an email address / new or not
     - email address in contacts or on Linkedin...
 
 - Closing loop - check into cronjobs
-
-- Setup code for my computer to "say" the classification outcome whent its true
 
 - Use Ec2, picloud(install package - pass function and arguments and it goes up to EC2) to run models / esp grid search
 
@@ -119,6 +117,8 @@ Completed:
     - Utilized subject and body text in vectorizer
     - Expanded the num of vectorizer features and pulled strip out of word adjustment because seemed to be collapsing words incorrectly 
 - Added in cross validation scores for output
+- Got say to work so that the computer now says the message when there is an email that needs a meeting location
+- Using subject and body combined to create vectorizer and 
 
 ---------------
 Stuff:
