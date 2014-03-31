@@ -139,7 +139,7 @@ def plot_confusion_matrix(model_name, conf_matrix, labels, save):
         plt.savefig('./graph_dir/cfm.png')
     plt.show()
 
-def rank_features(model_name, feature_names, class_model_coef, start_point=-20):
+def rank_features(model_name, feature_names, class_model_coef, start_point=-30):
     print '%s Top 20 Features' % model_name
     feature_names = np.asarray(feature_names)
     for rank, feat_index in enumerate(np.argsort(class_model_coef, axis=0)[start_point:], start=1):
@@ -228,7 +228,7 @@ def main(model_names, save=False, train_fn='train_split.pkl', model_fn='final_mo
     #model_names = ['LogisticRegression', 'MultinomialNB', 'SVC', 'RandomForest', 'GradientBoost']
 
     class_model = { 
-        'LogisticRegression': LogisticRegression(C=10000.0, penalty='l2', class_weight='auto', fit_intercept=True), 
+        'LogisticRegression': LogisticRegression(C=10000.0 , penalty='l2', class_weight='auto', fit_intercept=True), 
         'MultinomialNB': MultinomialNB(alpha=0.100000, fit_prior=True),
         'SVC': SVC(C=10000.0, kernel='linear', shrinking=True, probability=True, class_weight='auto'),
         'RandomForest': RandomForestClassifier(n_estimators=121, criterion='entropy', bootstrap=True, oob_score=True, max_features='auto'),

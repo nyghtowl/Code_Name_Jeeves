@@ -40,7 +40,7 @@ def stem_words(word):
 
 def nltk_tokenizer(raw):
     tokens = word_tokenize(raw)
-    return [stem_words(change_num(drop_punc(word))) for word in tokens]
+    return [stem_words(change_num(drop_punc(word.lstrip()))) for word in tokens]
 
 # Capture if date in body of text - True or False and add to feature set about doc...
 
@@ -57,6 +57,14 @@ def apply_feature_vector(vectorizer, data):
     print "Trasformed features in %0.3fs." % (time() - start)
     return feature_set
 
+def check_for_date():
+    today = datetime.datetime.now().date()
+    for word in a.split():
+        try:
+            if parser.parse(word, fuzzy=True).date() < today or val.date() > today:
+                return True
+        except:
+            pass
 
 def main(save=False, X=None, vec_fn='final_vec.pkl', data_fn='pd_dataframe.pkl'):
 
