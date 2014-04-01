@@ -7,25 +7,20 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 
 To Do:
 
-- Improve features
-    - Has date in text body
-    - combine subject with body words (also run with separate models)
+- Verify code results
 
-- get new data to test the validity of the classifier
+- Get new data to test the validity of the classifier
 
-- Improve code for producing the model and plot results to compare
-    - Grid Search again to improve parameters
-
-- Improve models
-    - Find an output for comparison of models
-        - plot the error (or accuracy) of the classifier as the number of training examples increases (learning curves) (use regularization sprint)
-    - Work on applying k-folds / stratified
-
-
-As Time Permits:
+Future:
 - Try Porter for stemming
 
+- Continue to code for producing the model:
+    - Grid Search again to improve parameters
+    - plot error rate and learning curves (regularization sprint)
+    - explore other ways to apply k-fold
+
 - Other feature ideas / customization
+    - Make date in body of text more informatitve
     - Python NLP - Regex library
     - length of thread (3+)
     - # email from an email address / new or not
@@ -39,7 +34,9 @@ As Time Permits:
 
 - Turn pipeline sections into classes/objects?
 
-
+- Take model to another level
+    - use partial predict so can take in feedback on new results and if they are correct (Adam gave this idea)
+    - make the vectorizer/classifier result one feature and then add in other engineered features and feed through another classifer
 
 Visualization Ideas:
 - map words and features to coefficients
@@ -118,7 +115,8 @@ Completed:
     - Expanded the num of vectorizer features and pulled strip out of word adjustment because seemed to be collapsing words incorrectly 
 - Added in cross validation scores for output
 - Got say to work so that the computer now says the message when there is an email that needs a meeting location
-- Using subject and body combined to create vectorizer and 
+- Using subject and body combined to create vectorizer
+- Created function to develop feature if there is a date in the body of the text. Results too muddy to give clear prediction value. Thus leaving out at this time till there is more time to investigate.
 
 ---------------
 Stuff:
