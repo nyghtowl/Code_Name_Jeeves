@@ -83,7 +83,7 @@ def load_emails_pd(table, save=False, df_fn='pd_dataframe.pkl'):
 
 # Would be good to split text, cross val and train when there is more data
 
-def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn='pd_dataframe.pkl', x_y_fn= 'x_y_data.pkl', vectorize=False):
+def define_x_y_data(data=None, save=False, x_col='sub_body', y_col='target', data_fn='pd_dataframe.pkl', x_y_fn= 'x_y_data.pkl', vectorize=False):
     if data is None:
         data = unpickle(os.path.join(pkl_dir, data_fn))
 
@@ -101,18 +101,16 @@ def vectorize_x(X, vec_fn='final_vec.pkl'):
     vectorizer = unpickle(os.path.join(pkl_dir, vec_fn))
     return vectorizer.transform(X)
 
-def get_x_y_data(data=None, x_y_fn= 'x_y_data.pkl', data_fn='pd_dataframe.pkl', vectorize=False):
-    if data is None:
-        data = unpickle(os.path.join(pkl_dir, data_fn))
+def get_x_y_data(x_y_fn= 'x_y_data.pkl', data_fn='pd_dataframe.pkl', vectorize=False):
     X, y = unpickle(os.path.join(pkl_dir, x_y_fn))
-
-    if vectorize:
-        X = vectorize_x(X) 
 
     if X.empty:
         print "New x y split saved."
         X, y = cpm.define_x_y_data(data, True, vecotrize=vectorize)
-    
+        
+    if vectorize:
+        X = vectorize_x(X) 
+
     return X, y
 
 # random of 9 or 11 provides dataset that is 93% accuracy on Logistic Regression
