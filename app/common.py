@@ -83,37 +83,51 @@ def load_emails_pd(table, save=False, df_fn='pd_dataframe.pkl'):
 
 # Would be good to split text, cross val and train when there is more data
 
-def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn='pd_dataframe.pkl', x_y_fn= 'x_y_data.pkl', vec_fn='final_vec.pkl'):
+def define_x_y_data(data=None, save=False, x_col='body', y_col='target', data_fn='pd_dataframe.pkl', x_y_fn= 'x_y_data.pkl', vectorize=False):
     if data is None:
         data = unpickle(os.path.join(pkl_dir, data_fn))
-    vectorizer = unpickle(os.path.join(pkl_dir, vec_fn))
 
-    X, y = vectorizer.transform(data[x_col]), data[y_col] 
+    X, y = data[x_col], data[y_col] 
     
+    if vectorize:
+        X = vectorize_x(X) 
+
     if save:
         pickle([X,y], os.path.join(pkl_dir, x_y_fn))
     
     return X, y
 
-def get_x_y_data(data=None, x_y_fn= 'x_y_data.pkl', data_fn='pd_dataframe.pkl'):
+def vectorize_x(X, vec_fn='final_vec.pkl'):
+    vectorizer = unpickle(os.path.join(pkl_dir, vec_fn))
+    return vectorizer.transform(X)
+
+def get_x_y_data(data=None, x_y_fn= 'x_y_data.pkl', data_fn='pd_dataframe.pkl', vectorize=False):
     if data is None:
         data = unpickle(os.path.join(pkl_dir, data_fn))
-
     X, y = unpickle(os.path.join(pkl_dir, x_y_fn))
+
+    if vectorize:
+        X = vectorize_x(X) 
 
     if X.empty:
         print "New x y split saved."
-        X, y = cpm.define_x_y_data(data, True)
+        X, y = cpm.define_x_y_data(data, True, vecotrize=vectorize)
     
     return X, y
 
-# random of 9 provides dataset that is 93% accuracy on Logistic Regression
-def create_datasets(X=None, y=None, random=None, split_size=.30, save=False, train_split_fn= 'train_split.pkl'):
+# random of 9 or 11 provides dataset that is 93% accuracy on Logistic Regression
+def create_datasets(X=None, y=None, random=None, split_size=.30, save=False, train_split_fn= 'train_split.pkl', vectorize=False):
     if X is None:
         X, y = get_x_y_data()
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split_size, random_state=random)
+
+    if vectorize:
+        X_train, X_test = vectorize_x(X_train), vectorize_x(X_test) 
+
     if save:
         pickle([X_train, X_test, y_train, y_test], os.path.join(pkl_dir, train_split_fn))
+
     return X_train, X_test, y_train, y_test 
 
 
