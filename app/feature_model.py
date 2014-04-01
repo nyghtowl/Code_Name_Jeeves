@@ -36,13 +36,16 @@ def drop_punc(word):
 def change_num(word):
     return re.sub(r'[0-9]+', r'd', word)
 
+def remove_wspace(word):
+    return re.sub(r'^\s+|\s+\Z', r'', word)
+
 def stem_words(word):
     lmtzr = WordNetLemmatizer()
     return lmtzr.lemmatize(word)
 
 def nltk_tokenizer(raw):
     tokens = word_tokenize(raw)
-    return [stem_words(change_num(drop_punc(word.lstrip()))) for word in tokens]
+    return [stem_words(change_num(drop_punc(remove_wspace(word)))) for word in tokens]
 
 # Capture if date in body of text - True or False and add to feature set about doc...
 
@@ -61,14 +64,9 @@ def apply_feature_vector(vectorizer, data):
 
 def check_for_date(text):
     today = datetime.datetime.now().date()
-    # print text
     for word in text.split():
-        # print 'word:', word
-        # print parser.parse(word, fuzzy=True).date()
         try:
-
             if parser.parse(word, fuzzy=True).date() < today or val.date() > today:
-                # print word
                 return True
         except:
             pass
@@ -84,10 +82,10 @@ def create_date_feature(data):
 
 def main(save=False, X=None, vec_fn='final_vec.pkl', data_fn='pd_dataframe.pkl'):
 
-    vectorizer_model = TfidfVectorizer(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', tokenizer=nltk_tokenizer, use_idf=True)
+    vectorizer_model = TfidfVectorizer(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', use_idf=True)
 
     if X is None:
-        X, y = cpm.get_x_y_data(data)
+        X, y = cpm.get_x_y_data()
     
     vectorizer = create_vec_model(vectorizer_model, X)
 
