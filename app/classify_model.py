@@ -116,27 +116,27 @@ def model_eval(model_name, model, X_test, y_test, y_pred, feature_names, save=Fa
 
 #    plot_cross_val(model_name, model, X_test, y_test, save)
 
-def create_confusion_matrix(model_name, y_test, y_pred, save):
+def create_confusion_matrix(model_name, y_test, y_pred, save=False):
     labels = [True, False]
     conf_matrix = confusion_matrix(y_test, y_pred, labels)
-    print '%s Confusion Matrix:' % model_name
+    print 'Jeeves Confusion Matrix:'
     print conf_matrix
     print
-    cm_plot = plot_confusion_matrix(model_name, conf_matrix, labels, save)
+    #cm_plot = plot_confusion_matrix(model_name, conf_matrix, labels, save)
+    return conf_matrix
 
-def plot_confusion_matrix(model_name, conf_matrix, labels, save):
+def plot_confusion_matrix(model_name, conf_matrix, labels, save, graph_fn='cfm.png', cmap=cm.cubehelix_r):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    cax = ax.matshow(conf_matrix, cmap=cm.cubehelix_r)
+    cax = ax.matshow(conf_matrix, cmap=cmap)
     fig.colorbar(cax)
-    plt.title('%s Email Confusion Matrix (True = email needs location)' % model_name, fontsize=16)
+    plt.title('Jeeves Confusion Matrix (True = email needs location)', fontsize=16)
     ax.set_xticklabels([''] + labels, fontsize=13)
     ax.set_yticklabels([''] + labels, fontsize=13)
     plt.xlabel('Predicted', fontsize=14)
     plt.ylabel('Actual', fontsize=14)
     if save:
-        # os.path.join(graph_dir, ''
-        plt.savefig('./graph_dir/cfm.png')
+        plt.savefig(os.path.join(graph_dir, graph_fn))
     plt.show()
 
 def rank_features(model_name, feature_names, class_model_coef, start_point=-30):
@@ -146,7 +146,7 @@ def rank_features(model_name, feature_names, class_model_coef, start_point=-30):
         print '%i: %s' % (rank, feature_names[feat_index])
 
 def plot_cross_val(model_name, model, X_test, y_test, save, graph_fn='cross_val.png'):
-    print '%s Cross Validation Scores Plot:' % model_name
+    print 'Jeeves Cross Validation Scores Plot:' 
     cv_scores = cross_val_score(model, X_test, y_test, cv=3, scoring='roc_auc')
     
     plt.figure(figsize=(20,10))
@@ -179,7 +179,7 @@ def plot_roc_curve(model_names, models, X_test, y_test, save=False, graph_fn='ro
     plt.plot((0, 1), (0, 1), 'k--')  # random predictions curve
     plt.xlim(0.0, 1.0)
     plt.ylim(0.0, 1.0)
-    plt.title('Email Classifier ROC Curve', fontsize=16)
+    plt.title('Jeeves Classifier ROC Curve', fontsize=16)
     plt.xlabel('False Positive Rate or (1 - Specifity)', fontsize=14)
     plt.ylabel('True Positive Rate or (Sensitivity)', fontsize=14)
     plt.xticks(fontsize=10)
