@@ -5,6 +5,7 @@ Common Project Methods
 
 from config import TEST_GMAIL_ID, TEST_GMAIL_PWD, connect_db, pkl_dir
 from sklearn.cross_validation import train_test_split
+import numpy as np
 import pandas
 import datetime
 import gmail
@@ -107,7 +108,7 @@ def get_x_y_data(x_y_fn= 'x_y_data.pkl', data_fn='pd_dataframe.pkl', vectorize=F
     if X.empty:
         print "New x y split saved."
         X, y = cpm.define_x_y_data(data, True, vecotrize=vectorize)
-        
+
     if vectorize:
         X = vectorize_x(X) 
 
@@ -136,6 +137,8 @@ def print_test_train_shape(X_train, X_test, y_train, y_test):
     print 'y_train:', y_train.shape
     print 'y_test:', y_test.shape
 
+###########################################################
+# Feature Names
 
 def get_feature_names(vectorizer=None, vec_fn='final_vec.pkl'):
     if vectorizer == None:
@@ -143,6 +146,21 @@ def get_feature_names(vectorizer=None, vec_fn='final_vec.pkl'):
 
     return vectorizer.get_feature_names()
 
+
+def rank_features(feature_names, class_model_coef, start_point=-30):
+    print 'Email Top %d Features' % -start_point
+    feature_names = np.asarray(feature_names)
+    for rank, feat_index in enumerate(np.argsort(class_model_coef, axis=0)[start_point:], start=1):
+        print '%i: %s' % (rank, feature_names[feat_index])
+
+
+def request_feature_rank(model_name, model, feature_names=get_feature_names()):
+    if model_name == 'RandomForest' or model_name == 'GradientBoost':
+        rank_features(feature_names, model.feature_importances_)
+    else:
+        rank_features(feature_names, model.coef_[0])
+        # except:
+        #     pass
 
 if __name__ == '__main__':
     main()
