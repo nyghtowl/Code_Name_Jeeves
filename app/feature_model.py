@@ -6,6 +6,7 @@ create cpt tables and leverage naive bayes sql for this section
 '''
 
 import common as cpm
+import numpy as np
 
 from config import pkl_dir
 
@@ -19,8 +20,9 @@ from nltk.stem.wordnet import WordNetLemmatizer
 #english_corpus = set(w.lower() for w in words.words())
 #import SnowballTokenizer
 
-from dateutil.parser import parse
+import dateutil.parser as parser
 from time import time
+import datetime
 import string
 import re
 import os
@@ -57,14 +59,28 @@ def apply_feature_vector(vectorizer, data):
     print "Trasformed features in %0.3fs." % (time() - start)
     return feature_set
 
-def check_for_date():
+def check_for_date(text):
     today = datetime.datetime.now().date()
-    for word in a.split():
+    # print text
+    for word in text.split():
+        # print 'word:', word
+        # print parser.parse(word, fuzzy=True).date()
         try:
+
             if parser.parse(word, fuzzy=True).date() < today or val.date() > today:
+                # print word
                 return True
         except:
             pass
+    return False
+
+
+def create_date_feature(data):
+    result = []
+    for text in data:
+        result.append(check_for_date(text))
+    return np.array(result)
+
 
 def main(save=False, X=None, vec_fn='final_vec.pkl', data_fn='pd_dataframe.pkl'):
 
