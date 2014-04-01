@@ -119,6 +119,10 @@ def setup_model(model_name, model, X_train, y_train, feature_names, save=False):
     
     cross_validate(model_name, model, X_train, y_train)
 
+    print 
+    
+    cpm.request_feature_rank(model_name, model)
+
     if save:
         model_fn='final_'+ model_name + '_.pkl'
         cpm.pickle(model, os.path.join(pkl_dir, model_fn))
@@ -149,7 +153,7 @@ def main(model_names, save=False, train_fn='train_split.pkl', model_fn='final_mo
 
     for model in model_names:
         model_results.append(setup_model(model, class_model[model], X_train, y_train, save))
-    
+
     return model_results
 
 
