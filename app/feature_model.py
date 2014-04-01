@@ -82,7 +82,7 @@ def create_date_feature(data):
 
 def main(save=False, X=None, vec_fn='final_vec.pkl', data_fn='pd_dataframe.pkl'):
 
-    vectorizer_model = TfidfVectorizer(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', use_idf=True)
+    vectorizer_model = TfidfVectorizer(min_df=2, strip_accents='unicode', max_features=10000, analyzer='word',ngram_range=(1, 3), stop_words='english', lowercase=True, norm='l1', tokenizer=nltk_tokenizer, use_idf=True)
 
     if X is None:
         X, y = cpm.get_x_y_data()
