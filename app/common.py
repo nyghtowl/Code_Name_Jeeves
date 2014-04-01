@@ -137,30 +137,7 @@ def print_test_train_shape(X_train, X_test, y_train, y_test):
     print 'y_train:', y_train.shape
     print 'y_test:', y_test.shape
 
-###########################################################
-# Feature Names
 
-def get_feature_names(vectorizer=None, vec_fn='final_vec.pkl'):
-    if vectorizer == None:
-        vectorizer = unpickle(os.path.join(pkl_dir, vec_fn))
-
-    return vectorizer.get_feature_names()
-
-
-def rank_features(feature_names, class_model_coef, start_point=-30):
-    print 'Email Top %d Features' % -start_point
-    feature_names = np.asarray(feature_names)
-    for rank, feat_index in enumerate(np.argsort(class_model_coef, axis=0)[start_point:], start=1):
-        print '%i: %s' % (rank, feature_names[feat_index])
-
-
-def request_feature_rank(model_name, model, feature_names=get_feature_names()):
-    if model_name == 'RandomForest' or model_name == 'GradientBoost':
-        rank_features(feature_names, model.feature_importances_)
-    else:
-        rank_features(feature_names, model.coef_[0])
-        # except:
-        #     pass
 
 if __name__ == '__main__':
     main()
