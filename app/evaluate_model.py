@@ -35,14 +35,6 @@ def model_eval(model_name, model, X_test, y_test, feature_names, save=False):
     print classification_report(y_test, y_pred)
     print 
     create_confusion_matrix(model_name, y_test, y_pred, save)
-    print
-    if model_name == 'RandomForest' or model_name == 'GradientBoost':
-        rank_features(model_name, feature_names, model.feature_importances_)
-    else:
-        try:
-            rank_features(model_name, feature_names, model.coef_[0])
-        except:
-            pass
 
 def create_confusion_matrix(model_name, y_test, y_pred, save=False):
     labels = [True, False]
@@ -66,12 +58,6 @@ def plot_confusion_matrix(model_name, conf_matrix, labels, save, graph_fn='cfm.p
     if save:
         plt.savefig(os.path.join(graph_dir, graph_fn))
     plt.show()
-
-def rank_features(model_name, feature_names, class_model_coef, start_point=-30):
-    print '%s Top 20 Features' % model_name
-    feature_names = np.asarray(feature_names)
-    for rank, feat_index in enumerate(np.argsort(class_model_coef, axis=0)[start_point:], start=1):
-        print '%i: %s' % (rank, feature_names[feat_index])
 
 
 def plot_roc_curve(model_names, models, X_test, y_test, save=False, graph_fn='roc_plot.png'):
@@ -97,8 +83,7 @@ def plot_roc_curve(model_names, models, X_test, y_test, save=False, graph_fn='ro
 # Add precision recall curve - similar to roc curve - shows how sold true is in comparison to true and false positives
 
 
-
-def main(model_results, save=False, train_fn='train_split.pkl', model_fn='final_model.pkl', new_data_split=False, random=11):
+def main(model_results, model_name, save=False, train_fn='train_split.pkl', model_fn='final_model.pkl', new_data_split=False, random=11):
 
     #model_names = ['LogisticRegression', 'MultinomialNB', 'SVC', 'RandomForest', 'GradientBoost']
 
@@ -106,10 +91,10 @@ def main(model_results, save=False, train_fn='train_split.pkl', model_fn='final_
 
     X_test = X_test.todense()
 
-    for model in model_results:
-        model_eval(model_name, model, X_test, y_test, cpm.get_feature_names(), save)
+    for i, model in enumerate(model_results):
+        model_eval(model_name[i], model, X_test, y_test, cpm.get_feature_names(), save)
 
-    plot_roc_curve(model_names[:len(model_results)], model_results, X_test, y_test, False)
+    plot_roc_curve(model_name[:len(model_results)], model_results, X_test, y_test, save)
 
 if __name__ == '__main__':
     main()
