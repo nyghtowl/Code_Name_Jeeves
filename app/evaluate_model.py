@@ -19,7 +19,7 @@ import os
 
 # Evaluate Model
 
-def model_eval(model_name, model, X_test, y_test, feature_names, save=False):
+def model_eval(model_name, model, X_test, y_test, save=False):
     # The mean square error - how much the values can fluctuate - need for logistic
     # print('Root Mean Squared Error: %.2f' % ((np.mean((model.predict(X_test) - y_test) ** 2))**(0.5)))
 
@@ -92,7 +92,7 @@ def main(model_results, model_name, save=False, train_fn='train_split.pkl', mode
     X_test = X_test.todense()
 
     for i, model in enumerate(model_results):
-        model_eval(model_name[i], model, X_test, y_test, cpm.get_feature_names(), save)
+        model_eval(model_name[i], model, X_test, y_test, save)
 
     plot_roc_curve(model_name[:len(model_results)], model_results, X_test, y_test, save)
 
