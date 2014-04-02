@@ -5,12 +5,6 @@ General idea idea is to get my computer to do something smart. Narrowed down to 
 
 ------------
 
-To Do:
-
-- Verify code results
-
-- Get new data to test the validity of the classifier
-
 Future:
 - Try Porter for stemming
 
@@ -117,6 +111,7 @@ Completed:
 - Got say to work so that the computer now says the message when there is an email that needs a meeting location
 - Using subject and body combined to create vectorizer
 - Created function to develop feature if there is a date in the body of the text. Results too muddy to give clear prediction value. Thus leaving out at this time till there is more time to investigate.
+- Pulled new data to test classifier. Proved the classifier needs a lot more data to abstract it for wider use.
 
 ---------------
 Stuff:
