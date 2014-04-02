@@ -9,8 +9,9 @@ from config import pkl_dir, graph_dir
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 from pylab import cm
-
+import prettyplotlib as ppl
 
 from sklearn.metrics import confusion_matrix, roc_curve, auc, accuracy_score, classification_report
 
@@ -36,29 +37,53 @@ def model_eval(model_name, model, X_test, y_test, save=False):
     print 
     create_confusion_matrix(model_name, y_test, y_pred, save)
 
-def create_confusion_matrix(model_name, y_test, y_pred, save=False):
+def create_confusion_matrix(model_name, y_test, y_pred, save=False, cmap=cm.cubehelix_r):
     labels = [True, False]
     conf_matrix = confusion_matrix(y_test, y_pred, labels)
     print 'Jeeves Confusion Matrix:'
     print conf_matrix
     print
-    cm_plot = plot_confusion_matrix(model_name, conf_matrix, labels, save)
+    cm_plot = plot_confusion_matrix(model_name, conf_matrix, labels, save, cmap)
     return conf_matrix
 
-def plot_confusion_matrix(model_name, conf_matrix, labels, save, graph_fn='cfm.png', cmap=cm.cubehelix_r):
+def plot_confusion_matrix(model_name, conf_matrix, labels, save, cmap, graph_fn='cfm.png'):
+
+    startcolor = '#cccccc'
+    midcolor = '#08519c'
+    endcolor = '#08306b'
+
+    b_g2 = LinearSegmentedColormap.from_list('B_G2', [startcolor, midcolor, endcolor])
+
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    cax = ax.matshow(conf_matrix, cmap=cmap)
+    cax = ax.matshow(conf_matrix, cmap=b_g2)
     fig.colorbar(cax)
-    plt.title('Jeeves Confusion Matrix (True = email needs location)', fontsize=16)
+    plt.title('Jeeves Confusion Matrix \n', fontsize=16)
     ax.set_xticklabels([''] + labels, fontsize=13)
     ax.set_yticklabels([''] + labels, fontsize=13)
+    ax.xaxis.set_ticks_position('none')
+    ax.yaxis.set_ticks_position('none')
+    spines_to_remove = ['top', 'right', 'left', 'bottom']
+    # for spine in spines_to_remove:
+    #     ax.spines[spine].set_visible(False)
     plt.xlabel('Predicted', fontsize=14)
     plt.ylabel('Actual', fontsize=14)
     if save:
         plt.savefig(os.path.join(graph_dir, graph_fn))
     plt.show()
 
+
+    # fig, ax = ppl.subplots(1)
+    # conf_graph = ppl.pcolormesh(fig, ax, conf_matrix, cmap=b_g2)
+    # ax.set_title('Jeeves Confusion Matrix \n', fontsize=16)
+    # ax.set_xticklabels(['','True','','False'], fontsize=13)
+    # ax.set_yticklabels(['', 'True','','False'], fontsize=13)
+    # ax.set_xlabel('Predicted', fontsize=14)
+    # ax.set_ylabel('Actual', fontsize=14)
+    # spines_to_remove = ['top', 'right', 'left', 'bottom']
+    # for spine in spines_to_remove:
+    #     ax.spines[spine].set_visible(True)
+    # fig.savefig(os.path.join(graph_dir, graph_fn))
 
 def plot_roc_curve(model_names, models, X_test, y_test, save=False, graph_fn='roc_plot.png'):
     for i, model in enumerate(models):

@@ -114,8 +114,8 @@ def get_x_y_data(x_y_fn= 'x_y_data.pkl', data_fn='pd_dataframe.pkl', vectorize=F
 
     return X, y
 
-# random of 9 or 11 provides dataset that is 93% accuracy on Logistic Regression
-def create_datasets(X=None, y=None, random=None, split_size=.30, save=False, train_split_fn= 'train_split.pkl', vectorize=False):
+
+def create_datasets(X=None, y=None, random=11, split_size=.30, save=False, train_split_fn= 'train_split.pkl', vectorize=False):
     if X is None:
         X, y = get_x_y_data()
 
