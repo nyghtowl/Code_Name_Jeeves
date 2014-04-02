@@ -83,18 +83,21 @@ def plot_roc_curve(model_names, models, X_test, y_test, save=False, graph_fn='ro
 # Add precision recall curve - similar to roc curve - shows how sold true is in comparison to true and false positives
 
 
-def main(model_results, model_name, save=False, train_fn='train_split.pkl', model_fn='final_model.pkl', new_data_split=False, random=11):
+def main(model_name, X_test=None, y_test=None, models=None, save=False, train_fn='train_split.pkl', model_fn='final_model.pkl'):
 
     #model_names = ['LogisticRegression', 'MultinomialNB', 'SVC', 'RandomForest', 'GradientBoost']
-
-    X_train, X_test, y_train, y_test = cpm.unpickle(os.path.join(pkl_dir, train_fn))
+    if models is None:
+        models = [cpm.unpickle(os.path.join(pkl_dir, model_fn))]
+    
+    if X_test is None:
+        X_train, X_test, y_train, y_test = cpm.unpickle(os.path.join(pkl_dir, train_fn))
 
     X_test = X_test.todense()
 
-    for i, model in enumerate(model_results):
+    for i, model in enumerate(models):
         model_eval(model_name[i], model, X_test, y_test, save)
 
-    plot_roc_curve(model_name[:len(model_results)], model_results, X_test, y_test, save)
+    plot_roc_curve(model_name[:len(models)], models, X_test, y_test, save)
 
 if __name__ == '__main__':
     main()

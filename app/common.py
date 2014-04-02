@@ -3,7 +3,7 @@ Common Project Methods
 
 '''
 
-from config import TEST_GMAIL_ID, TEST_GMAIL_PWD, connect_db, pkl_dir
+from config import TEST_GMAIL_ID, TEST_GMAIL_PWD, TEST_GMAIL_ID_3, TEST_GMAIL_PWD_3, connect_db, pkl_dir
 from sklearn.cross_validation import train_test_split
 import numpy as np
 import pandas
@@ -30,7 +30,7 @@ def unpickle(filename):
 # Gmail
 
 def get_emails(box, date=datetime.datetime.now()):
-    gmail_conn = gmail.login(TEST_GMAIL_ID, TEST_GMAIL_PWD)
+    gmail_conn = gmail.login(TEST_GMAIL_ID_3, TEST_GMAIL_PWD_3)
     emails = gmail_conn.label(box).mail(after=date)
     results = []
     print "num emails:", len(emails)
@@ -67,7 +67,7 @@ def _load_data(table, cols):
         db.execute('''SELECT * from %s''' % table)
         return pandas.DataFrame(db.fetchall(), columns=cols)
 
-def load_emails_pd(table, save=False, df_fn='pd_dataframe.pkl'):
+def load_emails_pd(table='raw_data_2', save=False, df_fn='pd_dataframe.pkl'):
     index_col = 'message_id'
     table_cols = ['message_id', 'thread_id', 'to_email', 'from_email', 'cc', 'date', 'starred', 'subject', 'body', 'sub_body', 'email_owner', 'box','target']
     raw_df = _load_data(table, table_cols)

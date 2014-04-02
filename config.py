@@ -26,6 +26,8 @@ TEST_GMAIL_ID = os.environ.get('test_gmail_id_1')
 TEST_GMAIL_PWD = os.environ.get('test_gmailpwd_1')
 TEST_GMAIL_ID_2 = os.environ.get('test_gmail_id_2')
 TEST_GMAIL_PWD_2 = os.environ.get('test_gmailpwd_2')
+TEST_GMAIL_ID_3 = os.environ.get('test_gmail_id_3')
+TEST_GMAIL_PWD_3 = os.environ.get('test_gmailpwd_3')
 PSQL_USER = os.environ.get('psql_user')
 
 
@@ -38,6 +40,7 @@ graph_dir = 'graph_dir'
 # Connect to postgres
 @contextmanager
 def connect_db():
+    conn = False
     try:
         conn = psycopg2.connect(database='jeeves_db', user=PSQL_USER) 
         db = conn.cursor()
