@@ -1,11 +1,57 @@
 # Code Name Jeeves 
 Zipfian Final Project
 
-General idea idea is to get my computer to do something smart. Narrowed down to have my computer classify incoming emails that need a meeting location defined.
+What is it?
+--------
 
-------------
+Jeeves is an email natural language classifier that finds messages that need a meeting location defined.
 
-Future:
+I built this as my Zipfian final project because I want my computer to do more things for me. Why not when it has all this data on me. I made a long wish list of items and then focused on getting my computer to read emails and classify the ones that meeting location defined. Then it sends me a text if an email is classified as true. 
+
+If there was enough time I wanted the program to take the next step of finding a couple recommendations on locations. Just getting the classifier working was plenty for the two weeks we had for the project. 
+
+This project is similar to spam filters where a false positive (getting texts on email incorrectly classified as true) is more acceptible than a false negative (missing an email that needs a location)
+
+
+Main Structure:
+--------
+
+- Handle_email.py, common.py & twilio_views.py in the app folder are the main files that run the application. 
+    - Handle_email:
+        - Main file that runs the full project pipeline from getting the email to sending a text 
+        - Call check_email function to get the program to check for new gmails
+        - There is a pickle file of the last time that the email was checked that will be upated after new email is found
+        - If there are new emails then the data is parsed out and cleaned
+        - The modified tf-idf vectorizer is unpickled and applied to the email message to generate features
+        - The modified logistic regression model is unpickled and the email features are run through the logistic regression for a prediction
+        - If the prediction is true then a message is created
+        - The message is sent through the jeeves_notifications function under the Twilio views
+        - Also the message is passed to the unix say command so my computer says that a new email needs a meeting location defined
+            - [See a screen capture of the project in action](http://nyghtowl.io/2014/03/30/jeeves-is-talking/)
+
+    - Common:
+        - Holds common functions that are used for the project pipeline and for building out and testing the vectorizer and classifier
+        - Pickle functions
+        - API call to get new gmails
+        - Function to clean data (strip whitespace and characters that are not UTF8, etc.)
+        - Store data in Postgres
+        - Put data into Pandas dataframe
+        - Generate dataset splits for X, y and cross validation
+
+    - Twilio_views: 
+        - Passes the message through the Twilio API to turn it into a text message on my phone
+
+More Information:
+--------
+
+Check out [nyghtowl.io](http://nyghtowl.io) for my blog posts on my progress with developing Jeeves:
+- [Starting the project](http://nyghtowl.io/2014/03/16/begin-with-the-end/)
+- [Completing the project pipeline](http://nyghtowl.io/2014/03/23/zipfian-project-week-1-closing-the-loop/)
+- [Fine tuning](http://nyghtowl.io/2014/03/30/jeeves-is-talking/)
+
+Future Plans:
+--------
+
 - Try Porter for stemming
 
 - Continue to code for producing the model:
@@ -20,7 +66,7 @@ Future:
     - # email from an email address / new or not
     - email address in contacts or on Linkedin...
 
-- Closing loop - check into cronjobs
+- Closing loop with a cronjob to automate email checking
 
 - Use Ec2, picloud(install package - pass function and arguments and it goes up to EC2) to run models / esp grid search
 
@@ -32,26 +78,12 @@ Future:
     - use partial predict so can take in feedback on new results and if they are correct (Adam gave this idea)
     - make the vectorizer/classifier result one feature and then add in other engineered features and feed through another classifer
 
-Visualization Ideas:
-- map words and features to coefficients
-- visualize dominant coeef - % positive emails has this dominant cooef
-
----------------
-Issues:
-- Limited data for significant enough results (potential for overfitting and/or low accuracy)
-- Duplication of data where there is a row per email no matter if its in a thread and emails typically contain duplications of the content from previous emails
-    - should just pick one email out of  thread and one that has the latest date
-    - Granted this is allowing resampling of the data
-- Facet Plot seems too extreme for words. Too many features and what value is there plotting features against features
 
 
-- Resolved Anaconda, virtualenv and ipython issues
-- Resolved science packages work in virtualenv
+Data Storage Structure:
+--------
 
----------------
-Data:
-
-Stored in Postgres DB
+Raw data stored in Postgres DB
 
 ~1000+ emails total
 ~120 emails meet target conditions (may be smaller based on thread emails)
@@ -66,66 +98,19 @@ Raw Data:
 - Subject (subject) = string
 - Starred Email (starred) = boolean (true meanss its starred)
 - Message Body (body) = text
+- Message Subject & Body (sub_body) = text
+- Email Owner (email_owner) = string (email source)
+- Box (email box) = string
 - Needs Location (target) = boolean (true needs a meeting location and based on labels 'Jeeves' & 'Starred')
 
----------------
-Completed:
-- Setup Twilio text message structure for results
-- Picked Gmail package to pull gmail and applied
-- Labeled messages that meet conditions / classify true & determined how to designate results in raw data database (target column)
-- Built & rebuilt Postgres table
-- Data munged and loaded raw data into Postgres
-- Pulled in science packages for virtualenv (resolved matplotlib issues after some experimenting with creating symbolic links to anaconda)
-- Figured out how to pull postgres into pandas
-- Ran initial EDA and confirmed dataset small as well as ways to consider subsetting. Also found a few issues with the data like empty cells.
-- Started vectorization and began dimensionality reduction 
-- Realized dimensionality not as valuable as thought but will keep it as back pocket item
-- Built initial classification models (review and leverage work from nlp project)
-    - Logistic Regression & Naive Bayes
-    - Built classification model analysis with accuracy, roc plot, etc.
-- Built out code to fetch new email, check email and send text if true condition met - need to test
-- Built out alternative classification models: Random Forest, Gradient Boost, Ada Boost and SVC. Gradient Boost gave best results with plain out of the box
-- Applied grid search which improved Logistic Regression and Multinomial NB. 
-- Applied grid search to Random Forest and SVC. SVC had the best result. Gradient Boost is taking too long to run right now.
-- Closed the loop and proved to take in an email classify and send a text
-- Cleaned up code / streamlined functions and connections between scrips.
-- Improved feature set with:
-    - stemming
-    - n-grams up to 3
-    - lowercase
-    - use_idf
-    - normalizing the data
-    - word shape adjustment
-    - Using use_idf drops the values on words like my name that show up across the corpus
-- Updated raw data structure to track where emails are from
-- Confirmed the model results and how to handle the classification - fixed it basically
-- Reloaded the raw data to pull out dates and repeated script
-- Reworked the script to make more encapsulated and abstracted. Consolidated certain functions where possible and fixed variable names to improve code clarity
-- Built out grid search script to run pipeline
-- Set stage if I want to run multiple models with grid search
-- Used random parameter to maintain split and changed test train split to take place after vectorized
-- Tried different approaches with vectorizer
-    - Utilized subject and body text in vectorizer
-    - Expanded the num of vectorizer features and pulled strip out of word adjustment because seemed to be collapsing words incorrectly 
-- Added in cross validation scores for output
-- Got say to work so that the computer now says the message when there is an email that needs a meeting location
-- Using subject and body combined to create vectorizer
-- Created function to develop feature if there is a date in the body of the text. Results too muddy to give clear prediction value. Thus leaving out at this time till there is more time to investigate.
-- Pulled new data to test classifier. Proved the classifier needs a lot more data to abstract it for wider use.
 
----------------
-Stuff:
-- Think of this project similar to spam filters where a false positive (email sent that needs a location) is more acceptible than a false negative (email not sent that needs a location)
-
-- To start ngrok use:
-    ./ngrok 80
-
-- Applied cPickle to save models because fast and commone solution. Sklearn has joblib which is similar and good for big data
-
-- python sendmail - send an email
+Support:
+--------
+- Any bugs about Markdown Preview please feel free to report [here](https://github.com/nyghtowl/Code_Name_Jeeves/issues)
+- And you are welcome to fork and submit pullrequests
 
 
----------------
-Points to Note:
+Copyright:
+--------
 
-Tfidf - very min impact if do all features vs max 10000
+Copyright (c) 2014 Nyghtowl
