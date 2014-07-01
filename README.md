@@ -1,5 +1,5 @@
 # Code Name Jeeves 
-Zipfian Final Project
+Zipfian Final Project Spring 2014
 
 What is it?
 --------

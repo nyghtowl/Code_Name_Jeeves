@@ -30,7 +30,7 @@ def unpickle(filename):
 # Gmail
 
 def get_emails(box, date=datetime.datetime.now()):
-    gmail_conn = gmail.login(TEST_GMAIL_ID_3, TEST_GMAIL_PWD_3)
+    gmail_conn = gmail.login(TEST_GMAIL_ID, TEST_GMAIL_PWD)
     emails = gmail_conn.label(box).mail(after=date)
     results = []
     print "num emails:", len(emails)

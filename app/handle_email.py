@@ -1,7 +1,7 @@
 '''
-Jeeves Project Pipeline
+Jeeves Email Pipeline
 
-Get emails, vectorize, classify and text if true
+Get emails, vectorize, classify and text/speak if true
 '''
 
 from twilio_views import jeeves_notifications
